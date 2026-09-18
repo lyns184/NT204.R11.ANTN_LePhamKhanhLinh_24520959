@@ -7,6 +7,7 @@ from ids.parsers.network.ipv4 import parse_ipv4
 from ids.parsers.transport.tcp import parse_tcp
 from ids.parsers.transport.udp import parse_udp
 from ids.parsers.application.detector import detect_application_protocol
+from ids.parsers.application.http import parse_http
 
 def process_packet(
     packet: Packet,
@@ -69,10 +70,17 @@ def process_packet(
 
     try:
         application_protocol = detect_application_protocol(packet)
+        application_fields = {}
+
+        if application_protocol == "HTTP":
+            http_data = parse_http(packet)
+
+            if http_data is not None:
+                application_fields = http_data
 
         event.application = {
             "protocol": application_protocol,
-            "fields": {},
+            "fields": application_fields,
         }
 
     except Exception as error:
@@ -81,7 +89,7 @@ def process_packet(
             "fields": {},
         }
         event.parse_errors.append(
-            f"Application detector error: {error}"
+            f"Application parser error: {error}"
         )
 
     print(event.to_dict())
