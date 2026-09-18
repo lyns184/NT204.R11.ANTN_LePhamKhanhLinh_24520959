@@ -106,5 +106,4 @@ def process_packet(
             f"Application parser error: {error}"
         )
 
-    print(event.to_dict())
     return event
