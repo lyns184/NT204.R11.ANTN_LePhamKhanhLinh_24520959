@@ -6,7 +6,7 @@ from ids.core.event import IDSEvent
 from ids.parsers.network.ipv4 import parse_ipv4
 from ids.parsers.transport.tcp import parse_tcp
 from ids.parsers.transport.udp import parse_udp
-
+from ids.parsers.application.detector import detect_application_protocol
 
 def process_packet(
     packet: Packet,
@@ -65,6 +65,23 @@ def process_packet(
         }
         event.parse_errors.append(
             f"Transport parser error: {error}"
+        )
+
+    try:
+        application_protocol = detect_application_protocol(packet)
+
+        event.application = {
+            "protocol": application_protocol,
+            "fields": {},
+        }
+
+    except Exception as error:
+        event.application = {
+            "protocol": "UNKNOWN",
+            "fields": {},
+        }
+        event.parse_errors.append(
+            f"Application detector error: {error}"
         )
 
     print(event.to_dict())
