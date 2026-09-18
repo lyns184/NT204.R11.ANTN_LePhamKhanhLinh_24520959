@@ -1,6 +1,7 @@
+import time
 from collections.abc import Callable
 
-from scapy.all import sniff
+from scapy.all import AsyncSniffer
 from scapy.packet import Packet
 
 
@@ -25,14 +26,29 @@ def capture_live(
         packet_count += 1
         packet_handler(packet, packet_count)
 
+    sniffer = AsyncSniffer(
+        iface=interface,
+        prn=handle_packet,
+        store=False,
+        count=packet_limit,
+    )
+
+    sniffer.start()
+
     try:
-        sniff(
-            iface=interface,
-            prn=handle_packet,
-            store=False,
-            count=packet_limit,
-        )
+        while sniffer.running:
+            if packet_limit > 0 and packet_count >= packet_limit:
+                break
+
+            time.sleep(0.1)
+
     except KeyboardInterrupt:
-        print("\nĐã dừng live capture.")
+        print("\nĐã nhận Ctrl+C, đang dừng live capture...")
+
+    finally:
+        if sniffer.running:
+            sniffer.stop()
+        else:
+            sniffer.join()
 
     return packet_count
