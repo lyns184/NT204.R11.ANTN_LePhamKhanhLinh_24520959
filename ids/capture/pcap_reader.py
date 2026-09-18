@@ -1,7 +1,9 @@
+import struct
 from collections.abc import Callable
 from pathlib import Path
 
 from scapy.all import PcapReader
+from scapy.error import Scapy_Exception
 from scapy.packet import Packet
 
 
@@ -13,9 +15,9 @@ def read_pcap(
     packet_handler: PacketHandler,
 ) -> int:
     """
-    Đọc từng packet từ file PCAP và chuyển packet vào hàm xử lý chung.
+    Đọc từng packet từ file PCAP.
 
-    Trả về tổng số packet đã đọc.
+    Packet bị lỗi không được làm chương trình crash.
     """
     pcap_path = Path(file_path)
 
@@ -27,7 +29,28 @@ def read_pcap(
     packet_count = 0
 
     with PcapReader(str(pcap_path)) as reader:
-        for packet_count, packet in enumerate(reader, start=1):
+        while True:
+            try:
+                packet = reader.read_packet()
+
+            except EOFError:
+                break
+
+            except (
+                Scapy_Exception,
+                struct.error,
+                ValueError,
+            ) as error:
+                print(
+                    "[WARNING] Không thể đọc packet tiếp theo: "
+                    f"{error}"
+                )
+                break
+
+            if packet is None:
+                break
+
+            packet_count += 1
             packet_handler(packet, packet_count)
 
     return packet_count
