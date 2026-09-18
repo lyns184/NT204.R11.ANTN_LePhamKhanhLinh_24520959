@@ -9,6 +9,7 @@ from ids.parsers.transport.udp import parse_udp
 from ids.parsers.application.detector import detect_application_protocol
 from ids.parsers.application.http import parse_http
 from ids.parsers.application.dns import parse_dns
+from ids.parsers.application.smtp import parse_smtp
 
 def process_packet(
     packet: Packet,
@@ -84,6 +85,12 @@ def process_packet(
 
             if dns_data is not None:
                 application_fields = dns_data
+
+        elif application_protocol == "SMTP":
+            smtp_data = parse_smtp(packet)
+
+            if smtp_data is not None:
+                application_fields = smtp_data
 
         event.application = {
             "protocol": application_protocol,
