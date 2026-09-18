@@ -5,6 +5,7 @@ from scapy.packet import Packet
 from ids.core.event import IDSEvent
 from ids.parsers.network.ipv4 import parse_ipv4
 from ids.parsers.transport.tcp import parse_tcp
+from ids.parsers.transport.udp import parse_udp
 
 
 def process_packet(
@@ -46,6 +47,9 @@ def process_packet(
 
     try:
         transport_data = parse_tcp(packet)
+
+        if transport_data is None:
+            transport_data = parse_udp(packet)
 
         if transport_data is None:
             event.transport = {
