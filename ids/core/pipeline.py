@@ -4,6 +4,7 @@ from scapy.packet import Packet
 
 from ids.core.event import IDSEvent
 from ids.parsers.network.ipv4 import parse_ipv4
+from ids.parsers.transport.tcp import parse_tcp
 
 
 def process_packet(
@@ -41,6 +42,25 @@ def process_packet(
         }
         event.parse_errors.append(
             f"Network parser error: {error}"
+        )
+
+    try:
+        transport_data = parse_tcp(packet)
+
+        if transport_data is None:
+            event.transport = {
+                "protocol": "UNKNOWN",
+            }
+        else:
+            event.transport = transport_data
+            event.payload_length = transport_data["payload_length"]
+
+    except Exception as error:
+        event.transport = {
+            "protocol": "UNKNOWN",
+        }
+        event.parse_errors.append(
+            f"Transport parser error: {error}"
         )
 
     print(event.to_dict())
