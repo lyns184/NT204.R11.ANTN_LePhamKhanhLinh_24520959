@@ -8,6 +8,7 @@ from ids.parsers.transport.tcp import parse_tcp
 from ids.parsers.transport.udp import parse_udp
 from ids.parsers.application.detector import detect_application_protocol
 from ids.parsers.application.http import parse_http
+from ids.parsers.application.dns import parse_dns
 
 def process_packet(
     packet: Packet,
@@ -77,6 +78,12 @@ def process_packet(
 
             if http_data is not None:
                 application_fields = http_data
+
+        elif application_protocol == "DNS":
+            dns_data = parse_dns(packet)
+
+            if dns_data is not None:
+                application_fields = dns_data
 
         event.application = {
             "protocol": application_protocol,
