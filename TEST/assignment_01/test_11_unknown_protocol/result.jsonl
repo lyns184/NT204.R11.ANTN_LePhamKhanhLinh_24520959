@@ -1,0 +1,2 @@
+{"packet_id":1,"timestamp":1165780762.880651,"capture_source":"pcap:TEST\\assignment_01\\test_11_unknown_protocol\\input.pcap","network":{"protocol":"UNKNOWN"},"transport":{"protocol":"UNKNOWN"},"application":{"protocol":"UNKNOWN","fields":{}},"payload_length":0,"parse_errors":[]}
+{"packet_id":2,"timestamp":1165780762.884732,"capture_source":"pcap:TEST\\assignment_01\\test_11_unknown_protocol\\input.pcap","network":{"protocol":"UNKNOWN"},"transport":{"protocol":"UNKNOWN"},"application":{"protocol":"UNKNOWN","fields":{}},"payload_length":0,"parse_errors":[]}
