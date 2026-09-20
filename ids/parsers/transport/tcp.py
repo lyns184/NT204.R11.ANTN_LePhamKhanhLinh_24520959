@@ -1,6 +1,6 @@
 from typing import Any
 
-from scapy.layers.inet import TCP
+from scapy.layers.inet import IP, TCP
 from scapy.packet import Packet
 
 
@@ -20,7 +20,28 @@ def parse_tcp(packet: Packet) -> dict[str, Any] | None:
     if tcp_layer.dataofs is not None:
         header_length = int(tcp_layer.dataofs) * 4
 
-    payload_length = len(bytes(tcp_layer.payload))
+    captured_payload_length = len(bytes(tcp_layer.payload))
+    ip_layer = packet.getlayer(IP)
+
+    if (
+        ip_layer is not None
+        and ip_layer.len is not None
+        and ip_layer.ihl is not None
+        and tcp_layer.dataofs is not None
+    ):
+        declared_payload_length = max(
+            0,
+            int(ip_layer.len)
+            - int(ip_layer.ihl) * 4
+            - int(tcp_layer.dataofs) * 4,
+        )
+
+        payload_length = min(
+            captured_payload_length,
+            declared_payload_length,
+        )
+    else:
+        payload_length = captured_payload_length
 
     return {
         "protocol": "TCP",
