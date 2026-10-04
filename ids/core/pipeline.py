@@ -19,12 +19,14 @@ from ids.decoder.http import (
     decode_http_form_body,
     decode_http_html_body,
 )
+from ids.decoder.smtp_session import SMTPDataTracker
 
 def process_packet(
     packet: Packet,
     packet_id: int,
     capture_source: str,
     decoder_config: DecoderConfig | None = None,
+    smtp_tracker: SMTPDataTracker | None = None,
 ) -> IDSEvent:
     """
     Chuyển packet Scapy thành IDSEvent chuẩn hóa.
@@ -179,6 +181,38 @@ def process_packet(
             event.decode_status = "error"
             event.decode_errors.append(
                 f"HTTP decoder error: {error}"
+            )
+    # Tracker cần nhận cả TCP packet có application UNKNOWN.
+    if smtp_tracker is not None:
+        try:
+            smtp_result = smtp_tracker.feed(event)
+
+            if smtp_result is not None:
+                event.decoded["smtp"] = {
+                    "mime": smtp_result,
+                }
+
+                event.decode_errors.extend(
+                    f"SMTP MIME: {message}"
+                    for message in smtp_result["errors"]
+                )
+
+                statuses = [smtp_result["status"]]
+
+                if event.decode_status != "not_processed":
+                    statuses.append(event.decode_status)
+
+                if all(status == "ok" for status in statuses):
+                    event.decode_status = "ok"
+                elif all(status == "error" for status in statuses):
+                    event.decode_status = "error"
+                else:
+                    event.decode_status = "partial"
+
+        except Exception as error:
+            event.decode_status = "error"
+            event.decode_errors.append(
+                f"SMTP decoder error: {error}"
             )
 
     return event

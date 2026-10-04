@@ -28,13 +28,16 @@ class SMTPDataTracker:
         session_config: SMTPDecoderConfig | None = None,
     ) -> None:
         self.decoder_config = (
-            decoder_config if decoder_config is not None
+            decoder_config
+            if decoder_config is not None
             else DecoderConfig()
         )
         self.session_config = (
-            session_config if session_config is not None
+            session_config
+            if session_config is not None
             else SMTPDecoderConfig()
         )
+
         self.sessions: dict[SessionKey, SMTPSession] = {}
         self.expired_sessions = 0
 
@@ -100,10 +103,16 @@ class SMTPDataTracker:
         try:
             timestamp = float(event.timestamp)
         except (TypeError, ValueError):
-            return self.failure("Invalid SMTP event timestamp", "error")
+            return self.failure(
+                "Invalid SMTP event timestamp",
+                "error",
+            )
 
         if not math.isfinite(timestamp):
-            return self.failure("Invalid SMTP event timestamp", "error")
+            return self.failure(
+                "Invalid SMTP event timestamp",
+                "error",
+            )
 
         self.expire(timestamp)
         session = self.sessions.get(key)
@@ -151,7 +160,10 @@ class SMTPDataTracker:
         payload = event.raw_payload[:payload_size]
 
         if session is not None:
-            session.last_seen = max(session.last_seen, timestamp)
+            session.last_seen = max(
+                session.last_seen,
+                timestamp,
+            )
 
         if not payload:
             return None
@@ -181,7 +193,9 @@ class SMTPDataTracker:
 
             self.sessions[key] = SMTPSession(
                 client=src,
-                next_sequence=(sequence + len(payload)) % 2**32,
+                next_sequence=(
+                    sequence + len(payload)
+                ) % 2**32,
                 last_seen=timestamp,
             )
             return None
@@ -189,7 +203,9 @@ class SMTPDataTracker:
         # Payload từ server.
         if src != session.client:
             if session.phase == "waiting_354":
-                first_line, separator, _ = payload.partition(b"\r\n")
+                first_line, separator, _ = payload.partition(
+                    b"\r\n"
+                )
 
                 if (
                     separator
@@ -203,7 +219,7 @@ class SMTPDataTracker:
                     "SMTP DATA was not confirmed by a complete 354 reply"
                 )
 
-            # ACK hoặc response khác từ server không phải email body.
+            # Response từ server không phải email body.
             return None
 
         # Payload từ client.
@@ -213,14 +229,48 @@ class SMTPDataTracker:
                 "SMTP content arrived before the 354 reply"
             )
 
-        if sequence != session.next_sequence:
+        # Sequence của byte đầu tiên đang lưu trong buffer.
+        # Luôn tính biến này, kể cả khi sequence đúng dự kiến.
+        buffer_start = (
+            session.next_sequence - len(session.buffer)
+        ) % 2**32
+
+        offset = (sequence - buffer_start) % 2**32
+
+        if offset > len(session.buffer):
             del self.sessions[key]
             return self.failure(
-                "SMTP TCP sequence gap, retransmission or reordering"
+                "SMTP TCP sequence gap or unsupported reordering"
             )
 
+        overlap_length = min(
+            len(payload),
+            len(session.buffer) - offset,
+        )
+
+        if overlap_length:
+            existing = bytes(
+                session.buffer[
+                    offset:offset + overlap_length
+                ]
+            )
+
+            if existing != payload[:overlap_length]:
+                del self.sessions[key]
+                return self.failure(
+                    "Conflicting SMTP TCP retransmission bytes",
+                    "error",
+                )
+
+        # Chỉ giữ bytes mới sau phần overlap đã kiểm tra.
+        new_payload = payload[overlap_length:]
+
+        if not new_payload:
+            # Retransmission hoàn toàn: không thêm lần nữa.
+            return None
+
         if (
-            len(session.buffer) + len(payload)
+            len(session.buffer) + len(new_payload)
             > self.decoder_config.max_input_bytes
         ):
             del self.sessions[key]
@@ -229,9 +279,9 @@ class SMTPDataTracker:
                 "error",
             )
 
-        session.buffer.extend(payload)
+        session.buffer.extend(new_payload)
         session.next_sequence = (
-            sequence + len(payload)
+            session.next_sequence + len(new_payload)
         ) % 2**32
 
         framed = extract_smtp_data(
@@ -253,7 +303,9 @@ class SMTPDataTracker:
         )
 
         # Không đưa bytes command phía sau email vào JSON.
-        result["remaining_bytes"] = len(framed["remaining"])
+        result["remaining_bytes"] = len(
+            framed["remaining"]
+        )
         return result
 
 
