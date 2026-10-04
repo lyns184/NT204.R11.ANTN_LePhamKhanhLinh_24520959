@@ -2,9 +2,12 @@ import base64
 import binascii
 import quopri
 import re
+
 from typing import Any
 
 from ids.core.config import DecoderConfig
+from email import policy
+from email.parser import BytesHeaderParser
 
 
 INVALID_QP_ESCAPE = re.compile(
@@ -117,3 +120,108 @@ def decode_mime_body(
         "status": "partial" if errors else "ok",
         "errors": errors,
     }
+
+def decode_mime_message(
+    raw_message: bytes,
+    config: DecoderConfig | None = None,
+) -> dict[str, Any]:
+    """
+    Decode một MIME message đầy đủ, gồm headers và body.
+
+    Caller phải xác định ranh giới message trước khi gọi.
+    Hàm không tự ghép TCP segment hoặc bỏ SMTP terminator.
+    """
+    config = config if config is not None else DecoderConfig()
+
+    def failure(
+        message: str,
+        status: str = "error",
+    ) -> dict[str, Any]:
+        return {
+            "value": None,
+            "status": status,
+            "errors": [message],
+        }
+
+    if not isinstance(raw_message, bytes):
+        return failure("MIME message must be bytes")
+
+    if len(raw_message) > config.max_input_bytes:
+        return failure("MIME message exceeds max_input_bytes")
+
+    if b"\r\n\r\n" in raw_message:
+        header_data, body = raw_message.split(b"\r\n\r\n", 1)
+    elif b"\n\n" in raw_message:
+        header_data, body = raw_message.split(b"\n\n", 1)
+    else:
+        return failure("MIME headers are incomplete", "partial")
+
+    try:
+        headers = BytesHeaderParser(
+            policy=policy.default,
+        ).parsebytes(header_data + b"\r\n\r\n")
+    except Exception as error:
+        return failure(f"MIME header parsing failed: {error}")
+
+    # Không chọn tùy ý khi có nhiều header quyết định cách decode.
+    for name in (
+        "Content-Type",
+        "Content-Transfer-Encoding",
+        "MIME-Version",
+    ):
+        if len(headers.get_all(name, [])) > 1:
+            return failure(f"Multiple {name} headers")
+
+    content_type = headers.get_content_type()
+
+    if headers.get_content_maintype() == "multipart":
+        return failure(
+            "Multipart MIME is not supported yet",
+            "partial",
+        )
+
+    if content_type not in ("text/plain", "text/html"):
+        return failure(
+            f"Unsupported MIME content type: {content_type}",
+            "partial",
+        )
+
+    # MIME text mặc định dùng US-ASCII khi không khai báo charset.
+    charset = headers.get_content_charset() or "us-ascii"
+
+    # Khi thiếu Content-Transfer-Encoding, mặc định là 7bit.
+    transfer_encoding = str(
+        headers.get("Content-Transfer-Encoding", "7bit")
+    ).strip().lower()
+
+    result = decode_mime_body(
+        raw_body=body,
+        transfer_encoding=transfer_encoding,
+        charset=charset,
+        config=config,
+    )
+
+    header_errors = [
+        f"MIME header defect: {type(defect).__name__}"
+        for defect in headers.defects
+    ]
+
+    for name in ("Content-Type", "Content-Transfer-Encoding"):
+        header = headers.get(name)
+
+        for defect in getattr(header, "defects", ()):
+            header_errors.append(
+                f"{name} defect: {type(defect).__name__}"
+            )
+
+    if header_errors:
+        result["errors"].extend(header_errors)
+
+        if result["status"] == "ok":
+            result["status"] = "partial"
+
+    result["content_type"] = content_type
+    result["charset"] = charset
+    result["transfer_encoding"] = transfer_encoding
+
+    return result
