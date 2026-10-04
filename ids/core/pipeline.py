@@ -6,7 +6,10 @@ from ids.core.event import IDSEvent
 from ids.parsers.network.ipv4 import parse_ipv4
 from ids.parsers.transport.tcp import parse_tcp
 from ids.parsers.transport.udp import parse_udp
-from ids.parsers.application.detector import detect_application_protocol
+from ids.parsers.application.detector import (
+    detect_application_protocol,
+    get_transport_payload,
+)
 from ids.parsers.application.http import parse_http
 from ids.parsers.application.dns import parse_dns
 from ids.parsers.application.smtp import parse_smtp
@@ -29,6 +32,15 @@ def process_packet(
         timestamp=timestamp,
         capture_source=capture_source,
     )
+    # Giữ bytes gốc để Decoder sử dụng.
+    # Lỗi lấy payload không được làm dừng việc phân tích packet.
+    try:
+        event.raw_payload = get_transport_payload(packet)
+    except Exception as error:
+        event.raw_payload = b""
+        event.parse_errors.append(
+            f"Payload extraction error: {error}"
+        )
 
     try:
         network_data = parse_ipv4(packet)
