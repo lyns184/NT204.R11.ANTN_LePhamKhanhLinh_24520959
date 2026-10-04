@@ -13,11 +13,14 @@ from ids.parsers.application.detector import (
 from ids.parsers.application.http import parse_http
 from ids.parsers.application.dns import parse_dns
 from ids.parsers.application.smtp import parse_smtp
+from ids.core.config import DecoderConfig
+from ids.decoder.http import decode_http_request_uri
 
 def process_packet(
     packet: Packet,
     packet_id: int,
     capture_source: str,
+    decoder_config: DecoderConfig | None = None,
 ) -> IDSEvent:
     """
     Chuyển packet Scapy thành IDSEvent chuẩn hóa.
@@ -117,5 +120,32 @@ def process_packet(
         event.parse_errors.append(
             f"Application parser error: {error}"
         )
+
+    # Decoder chạy sau parser, trước khi trả event cho output.
+    if (
+        event.application.get("protocol") == "HTTP"
+        and event.application.get("fields", {}).get("message_type")
+        == "request"
+    ):
+        try:
+            uri_result = decode_http_request_uri(
+                event,
+                decoder_config,
+            )
+
+            event.decoded["http"] = {
+                "uri": uri_result,
+            }
+            event.decode_status = uri_result["status"]
+            event.decode_errors.extend(
+                f"HTTP URI: {message}"
+                for message in uri_result["errors"]
+            )
+
+        except Exception as error:
+            event.decode_status = "error"
+            event.decode_errors.append(
+                f"HTTP URI decoder error: {error}"
+            )
 
     return event

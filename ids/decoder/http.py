@@ -3,6 +3,7 @@ from typing import Any
 from urllib.parse import unquote_to_bytes
 
 from ids.core.config import DecoderConfig
+from ids.core.event import IDSEvent
 
 
 INVALID_PERCENT = re.compile(rb"%(?![0-9a-fA-F]{2})")
@@ -121,3 +122,45 @@ def decode_form(
         "status": "partial" if errors else "ok",
         "errors": errors,
     }
+
+def decode_http_request_uri(
+    event: IDSEvent,
+    config: DecoderConfig | None = None,
+) -> dict[str, Any]:
+    """Lấy request-target từ dòng HTTP gốc và decode một lần."""
+    config = config if config is not None else DecoderConfig()
+    payload = event.raw_payload
+
+    # Chỉ đọc dòng đầu, không chuyển toàn bộ payload thành text.
+    first_line, separator, _ = payload.partition(b"\n")
+
+    if not separator:
+        return {
+            "value": None,
+            "status": "error",
+            "errors": ["Incomplete HTTP request line"],
+        }
+
+    first_line = first_line.removesuffix(b"\r")
+    parts = first_line.split(b" ", 2)
+
+    if len(parts) != 3:
+        return {
+            "value": None,
+            "status": "error",
+            "errors": ["Malformed HTTP request line"],
+        }
+
+    method, raw_uri, version = parts
+
+    if not method or not raw_uri or version not in (
+        b"HTTP/1.0",
+        b"HTTP/1.1",
+    ):
+        return {
+            "value": None,
+            "status": "error",
+            "errors": ["Invalid HTTP request line"],
+        }
+
+    return decode_uri(raw_uri, config)
