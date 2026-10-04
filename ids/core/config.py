@@ -1,29 +1,34 @@
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class DecoderConfig:
     """Các giới hạn dùng khi giải mã dữ liệu ứng dụng."""
 
-    # Giới hạn dữ liệu đầu vào cho mỗi thao tác decode: 1 MiB.
     max_input_bytes: int = 1_048_576
-
-    # Giới hạn số field khi phân tích URL-encoded form.
     max_form_fields: int = 1_000
+
+    # Tổng số MIME entities, gồm root và các phần con.
+    max_mime_parts: int = 100
+
+    # Root ở depth 0.
+    max_mime_depth: int = 8
 
     def __post_init__(self) -> None:
         limits = {
             "max_input_bytes": self.max_input_bytes,
             "max_form_fields": self.max_form_fields,
+            "max_mime_parts": self.max_mime_parts,
+            "max_mime_depth": self.max_mime_depth,
         }
 
         for name, value in limits.items():
-            # Không chấp nhận bool dù bool là subclass của int.
             if type(value) is not int or value <= 0:
                 raise ValueError(
                     f"{name} phải là số nguyên dương"
                 )
+
 
 @dataclass(frozen=True)
 class SMTPDecoderConfig:

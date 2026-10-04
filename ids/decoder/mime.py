@@ -121,15 +121,93 @@ def decode_mime_body(
         "errors": errors,
     }
 
+def split_mime_headers(raw: bytes) -> tuple[bytes, bytes]:
+    """Tách headers/body, kể cả phần có headers rỗng."""
+    if raw.startswith(b"\r\n"):
+        return b"", raw[2:]
+
+    if raw.startswith(b"\n"):
+        return b"", raw[1:]
+
+    if b"\r\n\r\n" in raw:
+        return tuple(raw.split(b"\r\n\r\n", 1))
+
+    if b"\n\n" in raw:
+        return tuple(raw.split(b"\n\n", 1))
+
+    raise ValueError("MIME headers are incomplete")
+
+
+def split_multipart_body(
+    body: bytes,
+    boundary: str,
+    remaining_parts: int,
+) -> list[bytes]:
+    """Tách boundary có giới hạn, yêu cầu closing boundary."""
+    try:
+        boundary_bytes = boundary.encode("ascii")
+    except UnicodeEncodeError:
+        raise ValueError("MIME boundary must be ASCII") from None
+
+    if (
+        not 1 <= len(boundary_bytes) <= 70
+        or re.fullmatch(
+            rb"[0-9A-Za-z'()+_,./:=? -]+",
+            boundary_bytes,
+        ) is None
+        or boundary_bytes.endswith(b" ")
+    ):
+        raise ValueError("Invalid MIME boundary")
+
+    pattern = re.compile(
+        rb"(?m)^--"
+        + re.escape(boundary_bytes)
+        + rb"(?P<closing>--)?[ \t]*(?:\r?\n|$)"
+    )
+
+    parts: list[bytes] = []
+    part_start: int | None = None
+    closed = False
+
+    for match in pattern.finditer(body):
+        if part_start is not None:
+            if len(parts) >= remaining_parts:
+                raise ValueError("MIME exceeds max_mime_parts")
+
+            part_end = match.start()
+
+            # Một newline trước boundary thuộc delimiter.
+            if body[part_start:part_end].endswith(b"\r\n"):
+                part_end -= 2
+            elif body[part_start:part_end].endswith(b"\n"):
+                part_end -= 1
+
+            parts.append(body[part_start:part_end])
+
+        if match.group("closing"):
+            closed = True
+            break
+
+        part_start = match.end()
+
+    if not closed:
+        raise ValueError("MIME closing boundary is missing")
+
+    if not parts:
+        raise ValueError("Multipart MIME has no body parts")
+
+    return parts
+
+
 def decode_mime_message(
     raw_message: bytes,
     config: DecoderConfig | None = None,
 ) -> dict[str, Any]:
     """
-    Decode một MIME message đầy đủ, gồm headers và body.
+    Decode single-part hoặc multipart MIME text.
 
-    Caller phải xác định ranh giới message trước khi gọi.
-    Hàm không tự ghép TCP segment hoặc bỏ SMTP terminator.
+    Duyệt bằng stack, giới hạn kích thước, số phần và độ sâu.
+    Caller phải cung cấp message đầy đủ, đã bỏ SMTP framing.
     """
     config = config if config is not None else DecoderConfig()
 
@@ -149,79 +227,200 @@ def decode_mime_message(
     if len(raw_message) > config.max_input_bytes:
         return failure("MIME message exceeds max_input_bytes")
 
-    if b"\r\n\r\n" in raw_message:
-        header_data, body = raw_message.split(b"\r\n\r\n", 1)
-    elif b"\n\n" in raw_message:
-        header_data, body = raw_message.split(b"\n\n", 1)
-    else:
-        return failure("MIME headers are incomplete", "partial")
+    # Stack item: raw entity, part ID, depth.
+    pending = [(raw_message, "0", 0)]
+    created_parts = 1
 
-    try:
-        headers = BytesHeaderParser(
-            policy=policy.default,
-        ).parsebytes(header_data + b"\r\n\r\n")
-    except Exception as error:
-        return failure(f"MIME header parsing failed: {error}")
+    leaf_results: list[dict[str, Any]] = []
+    container_errors: list[str] = []
+    root_content_type = ""
+    root_is_multipart = False
 
-    # Không chọn tùy ý khi có nhiều header quyết định cách decode.
-    for name in (
-        "Content-Type",
-        "Content-Transfer-Encoding",
-        "MIME-Version",
-    ):
-        if len(headers.get_all(name, [])) > 1:
-            return failure(f"Multiple {name} headers")
+    while pending:
+        raw_entity, part_id, depth = pending.pop()
 
-    content_type = headers.get_content_type()
+        try:
+            header_data, body = split_mime_headers(raw_entity)
+        except ValueError as error:
+            result = failure(str(error), "partial")
+            result["part_id"] = part_id
+            leaf_results.append(result)
+            continue
 
-    if headers.get_content_maintype() == "multipart":
-        return failure(
-            "Multipart MIME is not supported yet",
-            "partial",
-        )
+        try:
+            headers = BytesHeaderParser(
+                policy=policy.default,
+            ).parsebytes(header_data + b"\r\n\r\n")
+        except Exception as error:
+            result = failure(f"MIME header parsing failed: {error}")
+            result["part_id"] = part_id
+            leaf_results.append(result)
+            continue
 
-    if content_type not in ("text/plain", "text/html"):
-        return failure(
-            f"Unsupported MIME content type: {content_type}",
-            "partial",
-        )
+        content_type = headers.get_content_type()
+        charset = headers.get_content_charset() or "us-ascii"
+        transfer_encoding = str(
+            headers.get("Content-Transfer-Encoding", "7bit")
+        ).strip().lower()
 
-    # MIME text mặc định dùng US-ASCII khi không khai báo charset.
-    charset = headers.get_content_charset() or "us-ascii"
+        metadata = {
+            "part_id": part_id,
+            "content_type": content_type,
+            "charset": charset,
+            "transfer_encoding": transfer_encoding,
+        }
 
-    # Khi thiếu Content-Transfer-Encoding, mặc định là 7bit.
-    transfer_encoding = str(
-        headers.get("Content-Transfer-Encoding", "7bit")
-    ).strip().lower()
-
-    result = decode_mime_body(
-        raw_body=body,
-        transfer_encoding=transfer_encoding,
-        charset=charset,
-        config=config,
-    )
-
-    header_errors = [
-        f"MIME header defect: {type(defect).__name__}"
-        for defect in headers.defects
-    ]
-
-    for name in ("Content-Type", "Content-Transfer-Encoding"):
-        header = headers.get(name)
-
-        for defect in getattr(header, "defects", ()):
-            header_errors.append(
-                f"{name} defect: {type(defect).__name__}"
+        if part_id == "0":
+            root_content_type = content_type
+            root_is_multipart = (
+                headers.get_content_maintype() == "multipart"
             )
 
-    if header_errors:
+        duplicate_name = next(
+            (
+                name
+                for name in (
+                    "Content-Type",
+                    "Content-Transfer-Encoding",
+                    "MIME-Version",
+                )
+                if len(headers.get_all(name, [])) > 1
+            ),
+            None,
+        )
+
+        if duplicate_name is not None:
+            result = failure(f"Multiple {duplicate_name} headers")
+            result.update(metadata)
+            leaf_results.append(result)
+            continue
+
+        header_errors = [
+            f"MIME header defect: {type(defect).__name__}"
+            for defect in headers.defects
+        ]
+
+        for name in ("Content-Type", "Content-Transfer-Encoding"):
+            header = headers.get(name)
+
+            for defect in getattr(header, "defects", ()):
+                header_errors.append(
+                    f"{name} defect: {type(defect).__name__}"
+                )
+
+        if headers.get_content_maintype() == "multipart":
+            container_errors.extend(
+                f"Part {part_id}: {message}"
+                for message in header_errors
+            )
+
+            if transfer_encoding not in ("7bit", "8bit", "binary"):
+                return failure(
+                    f"Part {part_id}: Invalid multipart transfer encoding"
+                )
+
+            # Digest có quy tắc mặc định riêng cho message/rfc822.
+            if content_type == "multipart/digest":
+                result = failure(
+                    "Multipart digest is not supported yet",
+                    "partial",
+                )
+                result.update(metadata)
+                leaf_results.append(result)
+                continue
+
+            boundary = headers.get_boundary()
+
+            if not boundary:
+                result = failure("MIME boundary is missing", "partial")
+                result.update(metadata)
+                leaf_results.append(result)
+                continue
+
+            if depth >= config.max_mime_depth:
+                return failure("MIME exceeds max_mime_depth")
+
+            try:
+                children = split_multipart_body(
+                    body=body,
+                    boundary=boundary,
+                    remaining_parts=(
+                        config.max_mime_parts - created_parts
+                    ),
+                )
+            except ValueError as error:
+                message = str(error)
+
+                if message == "MIME exceeds max_mime_parts":
+                    return failure(message)
+
+                result = failure(message, "partial")
+                result.update(metadata)
+                leaf_results.append(result)
+                continue
+
+            created_parts += len(children)
+
+            # Push ngược để kết quả giữ thứ tự các phần trong email.
+            for index in range(len(children) - 1, -1, -1):
+                pending.append((
+                    children[index],
+                    f"{part_id}.{index + 1}",
+                    depth + 1,
+                ))
+
+            continue
+
+        if content_type not in ("text/plain", "text/html"):
+            result = failure(
+                f"Unsupported MIME content type: {content_type}",
+                "partial",
+            )
+        else:
+            result = decode_mime_body(
+                raw_body=body,
+                transfer_encoding=transfer_encoding,
+                charset=charset,
+                config=config,
+            )
+
         result["errors"].extend(header_errors)
 
-        if result["status"] == "ok":
+        if header_errors and result["status"] == "ok":
             result["status"] = "partial"
 
-    result["content_type"] = content_type
-    result["charset"] = charset
-    result["transfer_encoding"] = transfer_encoding
+        result.update(metadata)
+        leaf_results.append(result)
 
-    return result
+    # Giữ cấu trúc single-part cũ: value là text.
+    if not root_is_multipart and len(leaf_results) == 1:
+        return leaf_results[0]
+
+    errors = list(container_errors)
+
+    for result in leaf_results:
+        errors.extend(
+            f"Part {result['part_id']}: {message}"
+            for message in result["errors"]
+        )
+
+    statuses = [result["status"] for result in leaf_results]
+
+    if not errors and statuses and all(s == "ok" for s in statuses):
+        status = "ok"
+    elif (
+        not container_errors
+        and statuses
+        and all(s == "error" for s in statuses)
+    ):
+        status = "error"
+    else:
+        status = "partial"
+
+    return {
+        "value": leaf_results,
+        "status": status,
+        "errors": errors,
+        "content_type": root_content_type,
+        "parts_count": len(leaf_results),
+    }
