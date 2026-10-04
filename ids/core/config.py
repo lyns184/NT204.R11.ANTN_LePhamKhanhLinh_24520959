@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import math
 
 
 @dataclass(frozen=True)
@@ -23,3 +24,34 @@ class DecoderConfig:
                 raise ValueError(
                     f"{name} phải là số nguyên dương"
                 )
+
+@dataclass(frozen=True)
+class SMTPDecoderConfig:
+    max_sessions: int = 1_000
+    idle_timeout_seconds: float = 300.0
+
+    def __post_init__(self) -> None:
+        if (
+            type(self.max_sessions) is not int
+            or self.max_sessions <= 0
+        ):
+            raise ValueError(
+                "max_sessions phải là số nguyên dương"
+            )
+
+        timeout = self.idle_timeout_seconds
+
+        if type(timeout) not in (int, float):
+            raise ValueError(
+                "idle_timeout_seconds phải là số dương hữu hạn"
+            )
+
+        try:
+            valid_timeout = math.isfinite(timeout) and timeout > 0
+        except OverflowError:
+            valid_timeout = False
+
+        if not valid_timeout:
+            raise ValueError(
+                "idle_timeout_seconds phải là số dương hữu hạn"
+            )
