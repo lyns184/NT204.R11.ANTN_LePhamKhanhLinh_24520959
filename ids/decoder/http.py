@@ -6,6 +6,7 @@ from ids.core.config import DecoderConfig
 from ids.core.event import IDSEvent
 from email.message import Message
 from ids.decoder.html import decode_html_text
+from ids.decoder.text import decode_text
 
 INVALID_PERCENT = re.compile(rb"%(?![0-9a-fA-F]{2})")
 
@@ -340,6 +341,40 @@ def decode_http_html_body(
     charset = content_type.get_content_charset() or "utf-8"
 
     return decode_html_text(
+        raw_text=body_result["value"],
+        config=config,
+        charset=charset,
+    )
+
+def decode_http_text_body(
+    event: IDSEvent,
+    config: DecoderConfig | None = None,
+) -> dict[str, Any] | None:
+    """Character decoding cho HTTP body có Content-Type text/plain."""
+    headers = event.application.get(
+        "fields", {}
+    ).get("headers", {})
+
+    content_type = Message()
+    content_type["Content-Type"] = headers.get(
+        "content-type", ""
+    )
+
+    if content_type.get_content_type() != "text/plain":
+        return None
+
+    body_result = extract_http_body(
+        event,
+        config,
+    )
+
+    if body_result["status"] != "ok":
+        return body_result
+
+    # Chính sách hiện tại: dùng UTF-8 nếu không khai báo charset.
+    charset = content_type.get_content_charset() or "utf-8"
+
+    return decode_text(
         raw_text=body_result["value"],
         config=config,
         charset=charset,

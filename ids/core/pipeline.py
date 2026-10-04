@@ -18,6 +18,7 @@ from ids.decoder.http import (
     decode_http_request_uri,
     decode_http_form_body,
     decode_http_html_body,
+    decode_http_text_body,
 )
 from ids.decoder.smtp_session import SMTPDataTracker
 
@@ -154,6 +155,13 @@ def process_packet(
 
             if html_result is not None:
                 http_results["html"] = html_result
+            text_result = decode_http_text_body(
+                event,
+                decoder_config,
+            )
+
+            if text_result is not None:
+                http_results["text"] = text_result
 
             # Không có decoder phù hợp: giữ not_processed.
             if http_results:
