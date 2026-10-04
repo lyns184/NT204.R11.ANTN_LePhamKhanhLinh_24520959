@@ -17,6 +17,7 @@ from ids.core.config import DecoderConfig
 from ids.decoder.http import (
     decode_http_request_uri,
     decode_http_form_body,
+    decode_http_html_body,
 )
 
 def process_packet(
@@ -124,47 +125,55 @@ def process_packet(
             f"Application parser error: {error}"
         )
 
-    # Decoder chạy sau parser.
-    if (
-        event.application.get("protocol") == "HTTP"
-        and event.application.get("fields", {}).get("message_type")
-        == "request"
-    ):
+    # Decoder chạy sau parser, áp dụng cho HTTP request và response.
+    if event.application.get("protocol") == "HTTP":
         try:
-            http_results = {
-                "uri": decode_http_request_uri(
+            http_results = {}
+            fields = event.application.get("fields", {})
+
+            if fields.get("message_type") == "request":
+                http_results["uri"] = decode_http_request_uri(
                     event,
                     decoder_config,
-                ),
-            }
+                )
 
-            form_result = decode_http_form_body(
+                form_result = decode_http_form_body(
+                    event,
+                    decoder_config,
+                )
+
+                if form_result is not None:
+                    http_results["form"] = form_result
+
+            html_result = decode_http_html_body(
                 event,
                 decoder_config,
             )
 
-            if form_result is not None:
-                http_results["form"] = form_result
+            if html_result is not None:
+                http_results["html"] = html_result
 
-            event.decoded["http"] = http_results
+            # Không có decoder phù hợp: giữ not_processed.
+            if http_results:
+                event.decoded["http"] = http_results
 
-            for name, result in http_results.items():
-                event.decode_errors.extend(
-                    f"HTTP {name}: {message}"
-                    for message in result["errors"]
-                )
+                for name, result in http_results.items():
+                    event.decode_errors.extend(
+                        f"HTTP {name}: {message}"
+                        for message in result["errors"]
+                    )
 
-            statuses = [
-                result["status"]
-                for result in http_results.values()
-            ]
+                statuses = [
+                    result["status"]
+                    for result in http_results.values()
+                ]
 
-            if all(status == "ok" for status in statuses):
-                event.decode_status = "ok"
-            elif all(status == "error" for status in statuses):
-                event.decode_status = "error"
-            else:
-                event.decode_status = "partial"
+                if all(status == "ok" for status in statuses):
+                    event.decode_status = "ok"
+                elif all(status == "error" for status in statuses):
+                    event.decode_status = "error"
+                else:
+                    event.decode_status = "partial"
 
         except Exception as error:
             event.decode_status = "error"

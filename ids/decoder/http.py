@@ -5,7 +5,7 @@ from urllib.parse import unquote_to_bytes
 from ids.core.config import DecoderConfig
 from ids.core.event import IDSEvent
 from email.message import Message
-
+from ids.decoder.html import decode_html_text
 
 INVALID_PERCENT = re.compile(rb"%(?![0-9a-fA-F]{2})")
 
@@ -166,23 +166,13 @@ def decode_http_request_uri(
 
     return decode_uri(raw_uri, config)
 
-def decode_http_form_body(
+def extract_http_body(
     event: IDSEvent,
     config: DecoderConfig | None = None,
-) -> dict[str, Any] | None:
-    """Decode một form body đầy đủ nằm trong packet hiện tại."""
+) -> dict[str, Any]:
+    """Lấy body đầy đủ của một HTTP message trong packet hiện tại."""
     config = config if config is not None else DecoderConfig()
     headers = event.application.get("fields", {}).get("headers", {})
-
-    content_type = Message()
-    content_type["Content-Type"] = headers.get("content-type", "")
-
-    if (
-        content_type.get_content_type()
-        != "application/x-www-form-urlencoded"
-    ):
-        # Không phải form: hàm này không áp dụng.
-        return None
 
     def failure(
         message: str,
@@ -194,8 +184,49 @@ def decode_http_form_body(
             "errors": [message],
         }
 
-    if headers.get("transfer-encoding", "").strip():
+    if (
+        event.network.get("fragment_offset", 0) != 0
+        or "MF" in str(event.network.get("flags", ""))
+    ):
+        return failure("IP fragment reassembly is not available")
+
+    payload_size = event.transport.get("payload_length")
+
+    if type(payload_size) is not int or payload_size < 0:
+        return failure("Transport payload length is unavailable", "error")
+
+    if payload_size > len(event.raw_payload):
+        return failure("Captured transport payload is incomplete")
+
+    payload = event.raw_payload[:payload_size]
+
+    if b"\r\n\r\n" in payload:
+        header_data, body = payload.split(b"\r\n\r\n", 1)
+    elif b"\n\n" in payload:
+        header_data, body = payload.split(b"\n\n", 1)
+    else:
+        return failure("HTTP headers are incomplete")
+
+    # Kiểm tra raw headers vì parser có thể ghi đè header trùng.
+    raw_headers: dict[bytes, list[bytes]] = {}
+
+    for line in header_data.splitlines()[1:]:
+        name, separator, value = line.partition(b":")
+
+        if separator:
+            key = name.strip().lower()
+            raw_headers.setdefault(key, []).append(value.strip())
+
+    if (
+        b"transfer-encoding" in raw_headers
+        or headers.get("transfer-encoding", "").strip()
+    ):
         return failure("Transfer-Encoding is not supported yet")
+
+    encoding_values = raw_headers.get(b"content-encoding", [])
+
+    if len(encoding_values) > 1:
+        return failure("Multiple Content-Encoding headers", "error")
 
     content_encoding = headers.get(
         "content-encoding", ""
@@ -206,47 +237,7 @@ def decode_http_form_body(
             f"Content-Encoding is not supported: {content_encoding}"
         )
 
-    charset = content_type.get_content_charset() or "utf-8"
-
-    if charset not in ("utf-8", "utf8", "ascii", "us-ascii"):
-        return failure(f"Unsupported form charset: {charset}")
-
-    if (
-        event.network.get("fragment_offset", 0) != 0
-        or "MF" in str(event.network.get("flags", ""))
-    ):
-        return failure("IP fragment reassembly is not available")
-
-    payload_size = event.transport.get("payload_length")
-
-    if (
-        type(payload_size) is not int
-        or payload_size < 0
-    ):
-        return failure("Transport payload length is unavailable", "error")
-
-    if payload_size > len(event.raw_payload):
-        return failure("Captured transport payload is incomplete")
-
-    # Bỏ phần padding nằm ngoài payload length do TCP parser xác định.
-    payload = event.raw_payload[:payload_size]
-
-    if b"\r\n\r\n" in payload:
-        header_data, body = payload.split(b"\r\n\r\n", 1)
-    elif b"\n\n" in payload:
-        header_data, body = payload.split(b"\n\n", 1)
-    else:
-        return failure("HTTP headers are incomplete")
-
-    # Parser Bài 01 ghi đè header trùng tên.
-    # Kiểm tra raw header để không bỏ sót Content-Length trùng.
-    length_values: list[bytes] = []
-
-    for line in header_data.splitlines()[1:]:
-        name, separator, value = line.partition(b":")
-
-        if separator and name.strip().lower() == b"content-length":
-            length_values.append(value.strip())
+    length_values = raw_headers.get(b"content-length", [])
 
     if not length_values:
         return failure("Content-Length is missing; body boundary unknown")
@@ -265,15 +256,51 @@ def decode_http_form_body(
         return failure("Invalid Content-Length", "error")
 
     if declared_length > config.max_input_bytes:
-        return failure("Form body exceeds max_input_bytes", "error")
+        return failure("HTTP body exceeds max_input_bytes", "error")
 
     if len(body) < declared_length:
         return failure(
             "HTTP body is incomplete; TCP stream reassembly required"
         )
 
-    # Không đưa dữ liệu sau body của message này vào form decoder.
-    result = decode_form(body[:declared_length], config)
+    return {
+        "value": body[:declared_length],
+        "status": "ok",
+        "errors": [],
+    }
+
+
+def decode_http_form_body(
+    event: IDSEvent,
+    config: DecoderConfig | None = None,
+) -> dict[str, Any] | None:
+    """Decode URL-encoded form body."""
+    headers = event.application.get("fields", {}).get("headers", {})
+
+    content_type = Message()
+    content_type["Content-Type"] = headers.get("content-type", "")
+
+    if (
+        content_type.get_content_type()
+        != "application/x-www-form-urlencoded"
+    ):
+        return None
+
+    charset = content_type.get_content_charset() or "utf-8"
+
+    if charset not in ("utf-8", "utf8", "ascii", "us-ascii"):
+        return {
+            "value": None,
+            "status": "partial",
+            "errors": [f"Unsupported form charset: {charset}"],
+        }
+
+    body_result = extract_http_body(event, config)
+
+    if body_result["status"] != "ok":
+        return body_result
+
+    result = decode_form(body_result["value"], config)
 
     if (
         charset in ("ascii", "us-ascii")
@@ -290,3 +317,30 @@ def decode_http_form_body(
             )
 
     return result
+
+
+def decode_http_html_body(
+    event: IDSEvent,
+    config: DecoderConfig | None = None,
+) -> dict[str, Any] | None:
+    """Decode HTML entities khi Content-Type là text/html."""
+    headers = event.application.get("fields", {}).get("headers", {})
+
+    content_type = Message()
+    content_type["Content-Type"] = headers.get("content-type", "")
+
+    if content_type.get_content_type() != "text/html":
+        return None
+
+    body_result = extract_http_body(event, config)
+
+    if body_result["status"] != "ok":
+        return body_result
+
+    charset = content_type.get_content_charset() or "utf-8"
+
+    return decode_html_text(
+        raw_text=body_result["value"],
+        config=config,
+        charset=charset,
+    )
