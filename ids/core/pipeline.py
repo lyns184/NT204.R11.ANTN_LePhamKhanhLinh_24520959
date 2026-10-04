@@ -14,7 +14,10 @@ from ids.parsers.application.http import parse_http
 from ids.parsers.application.dns import parse_dns
 from ids.parsers.application.smtp import parse_smtp
 from ids.core.config import DecoderConfig
-from ids.decoder.http import decode_http_request_uri
+from ids.decoder.http import (
+    decode_http_request_uri,
+    decode_http_form_body,
+)
 
 def process_packet(
     packet: Packet,
@@ -121,31 +124,52 @@ def process_packet(
             f"Application parser error: {error}"
         )
 
-    # Decoder chạy sau parser, trước khi trả event cho output.
+    # Decoder chạy sau parser.
     if (
         event.application.get("protocol") == "HTTP"
         and event.application.get("fields", {}).get("message_type")
         == "request"
     ):
         try:
-            uri_result = decode_http_request_uri(
+            http_results = {
+                "uri": decode_http_request_uri(
+                    event,
+                    decoder_config,
+                ),
+            }
+
+            form_result = decode_http_form_body(
                 event,
                 decoder_config,
             )
 
-            event.decoded["http"] = {
-                "uri": uri_result,
-            }
-            event.decode_status = uri_result["status"]
-            event.decode_errors.extend(
-                f"HTTP URI: {message}"
-                for message in uri_result["errors"]
-            )
+            if form_result is not None:
+                http_results["form"] = form_result
+
+            event.decoded["http"] = http_results
+
+            for name, result in http_results.items():
+                event.decode_errors.extend(
+                    f"HTTP {name}: {message}"
+                    for message in result["errors"]
+                )
+
+            statuses = [
+                result["status"]
+                for result in http_results.values()
+            ]
+
+            if all(status == "ok" for status in statuses):
+                event.decode_status = "ok"
+            elif all(status == "error" for status in statuses):
+                event.decode_status = "error"
+            else:
+                event.decode_status = "partial"
 
         except Exception as error:
             event.decode_status = "error"
             event.decode_errors.append(
-                f"HTTP URI decoder error: {error}"
+                f"HTTP decoder error: {error}"
             )
 
     return event

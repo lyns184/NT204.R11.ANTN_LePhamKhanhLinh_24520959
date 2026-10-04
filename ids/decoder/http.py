@@ -4,6 +4,7 @@ from urllib.parse import unquote_to_bytes
 
 from ids.core.config import DecoderConfig
 from ids.core.event import IDSEvent
+from email.message import Message
 
 
 INVALID_PERCENT = re.compile(rb"%(?![0-9a-fA-F]{2})")
@@ -164,3 +165,128 @@ def decode_http_request_uri(
         }
 
     return decode_uri(raw_uri, config)
+
+def decode_http_form_body(
+    event: IDSEvent,
+    config: DecoderConfig | None = None,
+) -> dict[str, Any] | None:
+    """Decode một form body đầy đủ nằm trong packet hiện tại."""
+    config = config if config is not None else DecoderConfig()
+    headers = event.application.get("fields", {}).get("headers", {})
+
+    content_type = Message()
+    content_type["Content-Type"] = headers.get("content-type", "")
+
+    if (
+        content_type.get_content_type()
+        != "application/x-www-form-urlencoded"
+    ):
+        # Không phải form: hàm này không áp dụng.
+        return None
+
+    def failure(
+        message: str,
+        status: str = "partial",
+    ) -> dict[str, Any]:
+        return {
+            "value": None,
+            "status": status,
+            "errors": [message],
+        }
+
+    if headers.get("transfer-encoding", "").strip():
+        return failure("Transfer-Encoding is not supported yet")
+
+    content_encoding = headers.get(
+        "content-encoding", ""
+    ).strip().lower()
+
+    if content_encoding not in ("", "identity"):
+        return failure(
+            f"Content-Encoding is not supported: {content_encoding}"
+        )
+
+    charset = content_type.get_content_charset() or "utf-8"
+
+    if charset not in ("utf-8", "utf8", "ascii", "us-ascii"):
+        return failure(f"Unsupported form charset: {charset}")
+
+    if (
+        event.network.get("fragment_offset", 0) != 0
+        or "MF" in str(event.network.get("flags", ""))
+    ):
+        return failure("IP fragment reassembly is not available")
+
+    payload_size = event.transport.get("payload_length")
+
+    if (
+        type(payload_size) is not int
+        or payload_size < 0
+    ):
+        return failure("Transport payload length is unavailable", "error")
+
+    if payload_size > len(event.raw_payload):
+        return failure("Captured transport payload is incomplete")
+
+    # Bỏ phần padding nằm ngoài payload length do TCP parser xác định.
+    payload = event.raw_payload[:payload_size]
+
+    if b"\r\n\r\n" in payload:
+        header_data, body = payload.split(b"\r\n\r\n", 1)
+    elif b"\n\n" in payload:
+        header_data, body = payload.split(b"\n\n", 1)
+    else:
+        return failure("HTTP headers are incomplete")
+
+    # Parser Bài 01 ghi đè header trùng tên.
+    # Kiểm tra raw header để không bỏ sót Content-Length trùng.
+    length_values: list[bytes] = []
+
+    for line in header_data.splitlines()[1:]:
+        name, separator, value = line.partition(b":")
+
+        if separator and name.strip().lower() == b"content-length":
+            length_values.append(value.strip())
+
+    if not length_values:
+        return failure("Content-Length is missing; body boundary unknown")
+
+    if len(length_values) != 1:
+        return failure("Multiple Content-Length headers", "error")
+
+    raw_length = length_values[0]
+
+    if re.fullmatch(rb"[0-9]+", raw_length) is None:
+        return failure("Invalid Content-Length", "error")
+
+    try:
+        declared_length = int(raw_length)
+    except ValueError:
+        return failure("Invalid Content-Length", "error")
+
+    if declared_length > config.max_input_bytes:
+        return failure("Form body exceeds max_input_bytes", "error")
+
+    if len(body) < declared_length:
+        return failure(
+            "HTTP body is incomplete; TCP stream reassembly required"
+        )
+
+    # Không đưa dữ liệu sau body của message này vào form decoder.
+    result = decode_form(body[:declared_length], config)
+
+    if (
+        charset in ("ascii", "us-ascii")
+        and result["value"] is not None
+    ):
+        try:
+            for item in result["value"]:
+                item["name"].encode("ascii")
+                item["value"].encode("ascii")
+        except UnicodeEncodeError:
+            result["status"] = "partial"
+            result["errors"].append(
+                "Decoded form contains non-ASCII characters"
+            )
+
+    return result
