@@ -35,6 +35,50 @@ def decode_dns_value(value: Any) -> str:
     return str(value).rstrip(".")
 
 
+def extract_dns_answer_data(answer: Any) -> Any:
+    """Trích dữ liệu theo loại record, trả giá trị JSON-compatible."""
+    record_type = int(answer.type)
+
+    if record_type == 15:  # MX
+        return {
+            "preference": int(answer.preference),
+            "exchange": decode_dns_value(answer.exchange),
+        }
+
+    if record_type == 6:  # SOA
+        return {
+            "mname": decode_dns_value(answer.mname),
+            "rname": decode_dns_value(answer.rname),
+            "serial": int(answer.serial),
+            "refresh": int(answer.refresh),
+            "retry": int(answer.retry),
+            "expire": int(answer.expire),
+            "minimum": int(answer.minimum),
+        }
+
+    if record_type == 33:  # SRV
+        return {
+            "priority": int(answer.priority),
+            "weight": int(answer.weight),
+            "port": int(answer.port),
+            "target": decode_dns_value(answer.target),
+        }
+
+    raw_data = getattr(answer, "rdata", None)
+    if raw_data is None:
+        return None
+
+    if record_type == 16:  # TXT: giữ từng chuỗi và dấu chấm cuối.
+        values = raw_data if isinstance(raw_data, list) else [raw_data]
+        return [
+            value.decode("utf-8", errors="replace")
+            if isinstance(value, bytes) else str(value)
+            for value in values
+        ]
+
+    return decode_dns_value(raw_data)
+
+
 def get_dns_records(section: Any, count: int) -> list[Any]:
     """Lấy các record từ một section của DNS."""
     if section is None or count <= 0:
@@ -132,7 +176,7 @@ def parse_dns(packet: Packet) -> dict[str, Any] | None:
                 ),
                 "type_number": answer_type_number,
                 "ttl": int(answer.ttl),
-                "data": decode_dns_value(answer.rdata),
+                "data": extract_dns_answer_data(answer),
             }
         )
 
