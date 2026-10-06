@@ -73,6 +73,25 @@ class TCPFlagCounters:
 
 
 @dataclass
+class TCPTrackingState:
+    """Quan sát điều khiển nội bộ; số end đã gồm SYN/FIN và payload nếu biết."""
+
+    initiator: FlowDirection | None = None
+    syn_seen: bool = False
+    syn_end: int | None = None
+    syn_ack_seen: bool = False
+    syn_ack_end: int | None = None
+    handshake_observed: bool = False
+    capture_midstream: bool = False
+    forward_fin_seen: bool = False
+    forward_fin_end: int | None = None
+    forward_fin_acked: bool = False
+    backward_fin_seen: bool = False
+    backward_fin_end: int | None = None
+    backward_fin_acked: bool = False
+
+
+@dataclass
 class FlowRecord:
     """Một phiên flow; A là sender đầu tiên, forward=A→B, backward=B→A.
 
@@ -95,6 +114,7 @@ class FlowRecord:
     backward: DirectionCounters = field(default_factory=DirectionCounters)
     state: TCPState | None = field(init=False)
     tcp_flags: TCPFlagCounters | None = field(init=False)
+    tcp_tracking: TCPTrackingState | None = field(init=False, repr=False)
     close_reason: str | None = None
 
     def __post_init__(self) -> None:
@@ -118,6 +138,7 @@ class FlowRecord:
             raise ValueError("last_seen must not precede start_time")
         self.state = TCPState.NEW if self.protocol == "TCP" else None
         self.tcp_flags = TCPFlagCounters() if self.protocol == "TCP" else None
+        self.tcp_tracking = TCPTrackingState() if self.protocol == "TCP" else None
 
     @property
     def protocol(self) -> FlowProtocol:
@@ -131,6 +152,13 @@ class FlowRecord:
         """Snapshot độc lập để xuất summary, không đưa key tra cứu vào output."""
         result = asdict(self)
         del result["key"]
+        del result["tcp_tracking"]
+        result["handshake_observed"] = (
+            self.tcp_tracking.handshake_observed if self.tcp_tracking is not None else None
+        )
+        result["capture_midstream"] = (
+            self.tcp_tracking.capture_midstream if self.tcp_tracking is not None else None
+        )
         result["protocol"] = self.protocol
         result["duration"] = self.duration
         result["state"] = self.state.value if self.state is not None else None

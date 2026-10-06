@@ -1,4 +1,4 @@
-"""Bảng flow hai chiều và statistics; TCP transitions và expiry bổ sung sau."""
+"""Bảng flow hai chiều, statistics và TCP state; expiry bổ sung sau."""
 
 from dataclasses import dataclass
 from typing import Literal
@@ -9,6 +9,7 @@ from ids.core.event import IDSEvent
 from ids.flow_tracker.identity import extract_flow_identity, get_flow_direction
 from ids.flow_tracker.models import FlowDirection, FlowKey, FlowRecord
 from ids.flow_tracker.statistics import update_flow_statistics
+from ids.flow_tracker.tcp_state import apply_tcp_update, prepare_tcp_update
 
 
 @dataclass(frozen=True)
@@ -35,7 +36,7 @@ class FlowTracker:
         self.active_flows: dict[FlowKey, FlowRecord] = {}
 
     def track(self, event: IDSEvent) -> FlowTrackingResult:
-        """Tìm/tạo flow, cập nhật statistics và metadata; chưa cập nhật TCP state.
+        """Tìm/tạo flow, cập nhật statistics, TCP state và metadata.
 
         Skip/error không tạo flow và xóa metadata flow cũ trên event. Sai kiểu
         API gây TypeError; IDSEvent malformed được chứa lỗi và trả reason.
@@ -66,8 +67,11 @@ class FlowTracker:
                     last_seen=identity.timestamp,
                 )
             direction = get_flow_direction(identity, flow)
+            stage = "TCP state"
+            tcp_update = prepare_tcp_update(flow, event, direction)
             stage = "statistics"
             update_flow_statistics(flow, event, identity, direction)
+            apply_tcp_update(flow, tcp_update)
             if is_new:
                 self.active_flows[identity.key] = flow
         except Exception as error:
