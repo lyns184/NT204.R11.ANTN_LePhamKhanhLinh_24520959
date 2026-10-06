@@ -1,9 +1,63 @@
-from dataclasses import asdict, dataclass, field
+import base64
+import math
+from dataclasses import dataclass, field, fields
 from typing import Any, Literal, TypedDict
 
 
 PreprocessStatus = Literal["not_processed", "valid", "partial", "invalid"]
 ProcessingAction = Literal["process", "skip"]
+
+
+def _json_safe_copy(value: Any, path: str, errors: list[str],
+                    ancestors: set[int], depth: int = 0) -> Any:
+    """Sao chép dữ liệu xuất log, không thay đổi dữ liệu trong event."""
+    if depth > 64:
+        errors.append(f"{path}: nesting exceeds 64 levels; exported null")
+        return None
+    if value is None or isinstance(value, (str, bool)):
+        return value
+    if isinstance(value, int):
+        try:
+            str(value)
+        except ValueError:
+            errors.append(f"{path}: integer exceeds decimal conversion limit; exported hex")
+            return {"type": "int", "encoding": "hex", "value": hex(value)}
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            errors.append(f"{path}: non-finite float {value!r}; exported null")
+            return None
+        return value
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        errors.append(f"{path}: binary data exported as Base64")
+        return {
+            "type": type(value).__name__,
+            "encoding": "base64",
+            "value": base64.b64encode(bytes(value)).decode("ascii"),
+        }
+    if isinstance(value, (dict, list, tuple)):
+        identity = id(value)
+        if identity in ancestors:
+            errors.append(f"{path}: circular reference; exported null")
+            return None
+        ancestors.add(identity)
+        try:
+            if isinstance(value, dict):
+                result = {}
+                for key, item in value.items():
+                    if not isinstance(key, str):
+                        errors.append(f"{path}: non-string key omitted ({type(key).__name__})")
+                        continue
+                    result[key] = _json_safe_copy(item, f"{path}.{key}", errors, ancestors, depth + 1)
+                return result
+            return [
+                _json_safe_copy(item, f"{path}[{index}]", errors, ancestors, depth + 1)
+                for index, item in enumerate(value)
+            ]
+        finally:
+            ancestors.remove(identity)
+    errors.append(f"{path}: unsupported type {type(value).__name__}; exported null")
+    return None
 
 
 class NormalizedEvent(TypedDict, total=False):
@@ -62,7 +116,17 @@ class IDSEvent:
     direction: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        """Xuất event ra dictionary, loại dữ liệu bytes nội bộ."""
-        data = asdict(self)
-        data.pop("raw_payload", None)
+        """Xuất bản sao JSON-safe, loại raw_payload và giữ nguyên event gốc.
+
+        Bytes ngoài raw_payload được biểu diễn Base64 có nhãn, NaN/Infinity
+        thành None. serialization_errors chỉ xuất khi cần chuyển dữ liệu lỗi.
+        """
+        values = {
+            item.name: getattr(self, item.name, None)
+            for item in fields(self) if item.name != "raw_payload"
+        }
+        errors: list[str] = []
+        data = _json_safe_copy(values, "event", errors, set())
+        if errors:
+            data["serialization_errors"] = errors
         return data

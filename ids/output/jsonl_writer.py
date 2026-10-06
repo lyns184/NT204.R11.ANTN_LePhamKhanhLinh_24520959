@@ -32,6 +32,7 @@ class JSONLWriter:
         json_line = json.dumps(
             event.to_dict(),
             ensure_ascii=False,
+            allow_nan=False,
             separators=(",", ":"),
         )
 
