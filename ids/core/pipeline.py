@@ -13,7 +13,7 @@ from ids.parsers.application.detector import (
 from ids.parsers.application.http import parse_http
 from ids.parsers.application.dns import parse_dns
 from ids.parsers.application.smtp import parse_smtp
-from ids.core.config import DecoderConfig
+from ids.core.config import DecoderConfig, PreprocessorConfig
 from ids.decoder.http import (
     decode_http_request_uri,
     decode_http_form_body,
@@ -21,6 +21,7 @@ from ids.decoder.http import (
     decode_http_text_body,
 )
 from ids.decoder.smtp_session import SMTPDataTracker
+from ids.preprocessor.processor import preprocess_event
 
 def process_packet(
     packet: Packet,
@@ -28,6 +29,7 @@ def process_packet(
     capture_source: str,
     decoder_config: DecoderConfig | None = None,
     smtp_tracker: SMTPDataTracker | None = None,
+    preprocessor_config: PreprocessorConfig | None = None,
 ) -> IDSEvent:
     """
     Chuyển packet Scapy thành IDSEvent chuẩn hóa.
@@ -223,4 +225,5 @@ def process_packet(
                 f"SMTP decoder error: {error}"
             )
 
-    return event
+    # Dùng chung cho live/PCAP; skip vẫn trả event để output ghi đầy đủ.
+    return preprocess_event(event, preprocessor_config)

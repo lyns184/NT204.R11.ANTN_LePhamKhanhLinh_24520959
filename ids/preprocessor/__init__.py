@@ -1,6 +1,6 @@
 """Preprocessor cho IDSEvent; xem README.md về hợp đồng dữ liệu.
 
-Đã có preprocess_event điều phối các bước; chưa tích hợp capture pipeline.
+preprocess_event chạy sau Decoder trong pipeline chung của live/PCAP.
 """
 
 from ids.preprocessor.validation import ValidationIssue, ValidationResult, validate_event
