@@ -114,6 +114,8 @@ class IDSEvent:
     # Metadata do Flow Tracker bổ sung.
     flow_id: str | None = None
     direction: str | None = None
+    flow_tracking_status: Literal["not_processed", "tracked", "skipped", "error"] = "not_processed"
+    flow_tracking_reason: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Xuất bản sao JSON-safe, loại raw_payload và giữ nguyên event gốc.

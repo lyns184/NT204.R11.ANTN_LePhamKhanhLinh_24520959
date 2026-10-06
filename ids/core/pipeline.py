@@ -1,4 +1,6 @@
 import time
+from collections.abc import Callable
+from typing import Any
 
 from scapy.packet import Packet
 
@@ -22,6 +24,7 @@ from ids.decoder.http import (
 )
 from ids.decoder.smtp_session import SMTPDataTracker
 from ids.preprocessor.processor import preprocess_event
+from ids.flow_tracker import FlowTracker
 
 def process_packet(
     packet: Packet,
@@ -30,6 +33,8 @@ def process_packet(
     decoder_config: DecoderConfig | None = None,
     smtp_tracker: SMTPDataTracker | None = None,
     preprocessor_config: PreprocessorConfig | None = None,
+    flow_tracker: FlowTracker | None = None,
+    flow_summary_handler: Callable[[dict[str, Any]], None] | None = None,
 ) -> IDSEvent:
     """
     Chuyển packet Scapy thành IDSEvent chuẩn hóa.
@@ -226,4 +231,21 @@ def process_packet(
             )
 
     # Dùng chung cho live/PCAP; skip vẫn trả event để output ghi đầy đủ.
-    return preprocess_event(event, preprocessor_config)
+    event = preprocess_event(event, preprocessor_config)
+    if flow_tracker is not None:
+        try:
+            result = flow_tracker.track(event)
+        except Exception as error:
+            event.flow_id = None
+            event.direction = None
+            event.flow_tracking_status = "error"
+            event.flow_tracking_reason = f"Flow Tracker error: {type(error).__name__}: {error}"
+        else:
+            event.flow_tracking_status = result.status
+            event.flow_tracking_reason = result.reason
+            # Output I/O failures propagate to the capture caller; they must not
+            # be disguised as a malformed packet or successful capture.
+            if flow_summary_handler is not None:
+                for summary in result.completed_flows:
+                    flow_summary_handler(summary)
+    return event

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import TextIO
+from typing import Any, TextIO
 
 from ids.core.event import IDSEvent
 
@@ -26,11 +26,15 @@ class JSONLWriter:
         return self
 
     def write(self, event: IDSEvent) -> None:
+        self.write_record(event.to_dict())
+
+    def write_record(self, record: dict[str, Any]) -> None:
+        """Ghi record JSON, dùng cho flow summary trong file riêng."""
         if self.file is None:
             raise RuntimeError("JSONLWriter chưa được mở")
 
         json_line = json.dumps(
-            event.to_dict(),
+            record,
             # Escape Unicode, including lone surrogates that UTF-8 cannot encode.
             ensure_ascii=True,
             allow_nan=False,

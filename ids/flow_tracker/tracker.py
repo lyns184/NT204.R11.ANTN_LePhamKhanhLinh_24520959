@@ -30,7 +30,7 @@ class FlowTracker:
     """Một instance cho mỗi capture; ID ổn định trong phiên flow đang active.
 
     UUID mới mỗi lần tạo record, không dùng hash() hay tuple làm ID phiên.
-    Chưa tích hợp pipeline: caller gọi track sau preprocess_event.
+    Pipeline gọi track sau preprocess_event; caller xuất completed_flows.
     """
 
     def __init__(self, config: FlowTrackerConfig | None = None) -> None:
@@ -67,7 +67,7 @@ class FlowTracker:
     def expire(self, now: float) -> list[dict[str, Any]]:
         """Đóng/xuất flow idle ở ngưỡng >= timeout; clock không lùi.
 
-        Caller live phải gọi định kỳ kể cả không có packet (tích hợp task 6).
+        Caller live gọi định kỳ kể cả không có packet.
         Không dùng wall clock cho replay PCAP. Duration vẫn tính từ packet
         đầu/cuối, không cộng thời gian chờ timeout. Không lưu lịch sử đã xuất.
         """
@@ -91,7 +91,7 @@ class FlowTracker:
         """Xuất bản chụp mọi flow còn lại và giải phóng bảng khi dừng capture.
 
         Không tự gán TCP CLOSED: EOF/dừng capture không chứng minh đã đóng TCP.
-        Có thể dùng reason capture_error/shutdown từ caller task tích hợp.
+        Có thể dùng reason capture_error/shutdown từ capture caller.
         """
         if not isinstance(reason, str) or not reason.strip():
             raise ValueError("Flush reason must be a nonempty string")
