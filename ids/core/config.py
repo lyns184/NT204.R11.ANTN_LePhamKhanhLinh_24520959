@@ -82,3 +82,32 @@ class PreprocessorConfig:
                 raise ValueError(
                     f"{name} phải là 'process' hoặc 'skip'"
                 )
+
+
+@dataclass(frozen=True)
+class FlowTrackerConfig:
+    """Giới hạn bảng flow và lịch kiểm tra timeout của live capture.
+
+    PCAP dùng timestamp event; live cần kiểm tra định kỳ kể cả khi không có
+    packet mới. Các giá trị dưới đây là mặc định của project, có thể cấu hình.
+    """
+
+    tcp_idle_timeout_seconds: float = 300.0
+    udp_idle_timeout_seconds: float = 60.0
+    expiration_check_interval_seconds: float = 1.0
+    max_active_flows: int = 10_000
+
+    def __post_init__(self) -> None:
+        if type(self.max_active_flows) is not int or self.max_active_flows <= 0:
+            raise ValueError("max_active_flows phải là số nguyên dương")
+        for name in (
+            "tcp_idle_timeout_seconds", "udp_idle_timeout_seconds",
+            "expiration_check_interval_seconds",
+        ):
+            value = getattr(self, name)
+            try:
+                valid = type(value) in (int, float) and math.isfinite(value) and value > 0
+            except OverflowError:
+                valid = False
+            if not valid:
+                raise ValueError(f"{name} phải là số dương hữu hạn")
