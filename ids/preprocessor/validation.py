@@ -229,6 +229,11 @@ def validate_event(event: IDSEvent) -> ValidationResult:
         if fields.get("body") is not None and not isinstance(fields["body"], str):
             error("application.fields.body", "invalid_type", "Expected a body string")
     elif application_protocol == "DNS":
+        for key, maximum in (
+            ("transaction_id", 65535), ("opcode", 15), ("response_code", 15),
+            ("question_count", 65535), ("answer_count", 65535),
+        ):
+            integer(fields.get(key), f"application.fields.{key}", 0, maximum)
         for key, name_field in (("questions", "domain"), ("answers", "name")):
             records = fields.get(key)
             if records is None:
@@ -240,10 +245,33 @@ def validate_event(event: IDSEvent) -> ValidationResult:
                 path = f"application.fields.{key}[{index}]"
                 if not isinstance(record, dict):
                     error(path, "invalid_type", "Expected a record dictionary")
-                elif name_field in record:
+                    continue
+                if name_field in record:
                     # DNS root is represented by an empty string in the Parser.
                     if not isinstance(record[name_field], str):
                         error(f"{path}.{name_field}", "invalid_type", "Expected a domain string")
+                if key == "questions":
+                    for number_field in ("query_type_number", "query_class"):
+                        integer(record.get(number_field), f"{path}.{number_field}", 0, 65535)
+                else:
+                    integer(record.get("type_number"), f"{path}.type_number", 0, 65535)
+                    integer(record.get("ttl"), f"{path}.ttl", 0, 2**32 - 1)
+                    data = record.get("data")
+                    if isinstance(data, dict):
+                        record_type = record.get("type")
+                        record_type = record_type.strip().upper() if isinstance(record_type, str) else None
+                        # Check typed record fields even when the numeric type is unavailable.
+                        number_fields: tuple[str, ...] = ()
+                        maximum = 65535
+                        if record.get("type_number") == 15 or record_type == "MX":
+                            number_fields = ("preference",)
+                        elif record.get("type_number") == 33 or record_type == "SRV":
+                            number_fields = ("priority", "weight", "port")
+                        elif record.get("type_number") == 6 or record_type == "SOA":
+                            number_fields = ("serial", "refresh", "retry", "expire", "minimum")
+                            maximum = 2**32 - 1
+                        for number_field in number_fields:
+                            integer(data.get(number_field), f"{path}.data.{number_field}", 0, maximum)
     elif application_protocol == "SMTP":
         message_type = fields.get("message_type")
         if message_type is None and fields:
