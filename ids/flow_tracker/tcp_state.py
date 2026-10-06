@@ -98,12 +98,14 @@ def prepare_tcp_update(flow: FlowRecord, event: IDSEvent, direction: FlowDirecti
             if tracking.initiator is None:
                 tracking.initiator = opposite
                 tracking.capture_midstream = True
-            if direction != tracking.initiator and _covers(ack, tracking.syn_end):
+            acknowledges_syn = ack is None or tracking.syn_end is None or ack == tracking.syn_end
+            if direction != tracking.initiator and acknowledges_syn and not tracking.syn_ack_seen:
                 tracking.syn_ack_seen = True
                 tracking.syn_ack_end = end
             state = TCPState.HANDSHAKE
         elif ack_flag and tracking.syn_ack_seen and direction == tracking.initiator:
-            if _covers(ack, tracking.syn_ack_end):
+            initiator_sequence = sequence is None or tracking.syn_end is None or sequence == tracking.syn_end
+            if initiator_sequence and _covers(ack, tracking.syn_ack_end):
                 state = TCPState.ESTABLISHED
                 tracking.handshake_observed = tracking.syn_seen
         elif state == TCPState.NEW and (ack_flag or (payload is not None and payload > 0)):
