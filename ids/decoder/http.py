@@ -355,10 +355,12 @@ def decode_http_text_body(
         "fields", {}
     ).get("headers", {})
 
+    raw_content_type = headers.get("content-type", "").strip()
+    if not raw_content_type:
+        return None
+
     content_type = Message()
-    content_type["Content-Type"] = headers.get(
-        "content-type", ""
-    )
+    content_type["Content-Type"] = raw_content_type
 
     if content_type.get_content_type() != "text/plain":
         return None
