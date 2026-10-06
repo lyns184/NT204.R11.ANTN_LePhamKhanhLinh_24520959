@@ -1,6 +1,8 @@
 import math
 from dataclasses import dataclass
 
+from ids.core.event import ProcessingAction
+
 
 @dataclass(frozen=True)
 class DecoderConfig:
@@ -60,3 +62,23 @@ class SMTPDecoderConfig:
             raise ValueError(
                 "idle_timeout_seconds phải là số dương hữu hạn"
             )
+
+
+@dataclass(frozen=True)
+class PreprocessorConfig:
+    """Chính sách cho event invalid và network/transport không hỗ trợ.
+
+    Application UNKNOWN không tự động thuộc chính sách unsupported:
+    event vẫn có thể có IPv4/TCP/UDP đủ để Flow Tracker xử lý.
+    """
+
+    invalid_action: ProcessingAction = "skip"
+    unsupported_action: ProcessingAction = "skip"
+
+    def __post_init__(self) -> None:
+        for name in ("invalid_action", "unsupported_action"):
+            value = getattr(self, name)
+            if not isinstance(value, str) or value not in ("process", "skip"):
+                raise ValueError(
+                    f"{name} phải là 'process' hoặc 'skip'"
+                )

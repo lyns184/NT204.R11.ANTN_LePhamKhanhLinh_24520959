@@ -1,5 +1,20 @@
 from dataclasses import asdict, dataclass, field
-from typing import Any
+from typing import Any, Literal, TypedDict
+
+
+PreprocessStatus = Literal["not_processed", "valid", "partial", "invalid"]
+ProcessingAction = Literal["process", "skip"]
+
+
+class NormalizedEvent(TypedDict, total=False):
+    """Biểu diễn chuẩn hóa riêng; để rỗng trước khi Preprocessor chạy."""
+
+    timestamp: float
+    network: dict[str, Any]
+    transport: dict[str, Any]
+    application: dict[str, Any]
+    payload_length: int | None
+    packet_length: int | None
 
 
 @dataclass
@@ -34,9 +49,12 @@ class IDSEvent:
     decode_status: str = "not_processed"
     decode_errors: list[str] = field(default_factory=list)
 
-    # Metadata của Preprocessor.
-    preprocess_status: str = "not_processed"
-    processing_action: str | None = None
+    # Preprocessor giữ kết quả riêng, không sửa dữ liệu Parser/Decoder.
+    normalized: NormalizedEvent = field(default_factory=dict)
+
+    # not_processed/None được giữ cho đến khi Preprocessor chạy.
+    preprocess_status: PreprocessStatus = "not_processed"
+    processing_action: ProcessingAction | None = None
     reason: str | None = None
 
     # Metadata do Flow Tracker bổ sung.
