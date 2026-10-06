@@ -9,7 +9,7 @@ ProcessingAction = Literal["process", "skip"]
 class NormalizedEvent(TypedDict, total=False):
     """Biểu diễn chuẩn hóa riêng; để rỗng trước khi Preprocessor chạy."""
 
-    timestamp: float
+    timestamp: float | None
     network: dict[str, Any]
     transport: dict[str, Any]
     application: dict[str, Any]
