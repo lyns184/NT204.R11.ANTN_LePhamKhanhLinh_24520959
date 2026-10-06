@@ -17,7 +17,7 @@ def read_pcap(
     """
     Đọc từng packet từ file PCAP.
 
-    Packet bị lỗi không được làm chương trình crash.
+    Lỗi đọc file được báo lên caller, không trả số packet như đã đọc thành công.
     """
     pcap_path = Path(file_path)
 
@@ -41,11 +41,9 @@ def read_pcap(
                 struct.error,
                 ValueError,
             ) as error:
-                print(
-                    "[WARNING] Không thể đọc packet tiếp theo: "
-                    f"{error}"
-                )
-                break
+                raise Scapy_Exception(
+                    f"Đọc PCAP thất bại sau {packet_count} packet: {error}"
+                ) from error
 
             if packet is None:
                 break
