@@ -37,6 +37,12 @@ class PayloadStatus(str, Enum):
     ERROR = "error"
 
 
+class ParseStatus(str, Enum):
+    VALID = "valid"
+    INVALID = "invalid"
+    UNSUPPORTED = "unsupported"
+
+
 def _integer(value: Any, name: str, low: int, high: int | None = None) -> None:
     if type(value) is not int or value < low or (high is not None and value > high):
         limits = f"{low}..{high}" if high is not None else f">= {low}"
@@ -340,6 +346,32 @@ def _identification(sid: int, rev: int, msg: str, classtype: str | None,
         raise ValueError("classtype must be an identifier or None")
     if priority is not None:
         _integer(priority, "priority", 1, MAX_RULE_NUMBER)
+
+
+@dataclass(frozen=True)
+class ParseResult(JSONModel):
+    """Chỉ valid mới mang Rule; lỗi/unsupported không để lọt partial rule."""
+
+    status: ParseStatus
+    rule: Rule | None = None
+    diagnostics: tuple[Diagnostic, ...] = ()
+
+    def __post_init__(self) -> None:
+        _choice(self.status, "parse.status", tuple(item.value for item in ParseStatus))
+        object.__setattr__(self, "status", ParseStatus(self.status))
+        diagnostics = _items(self.diagnostics, "parse.diagnostics", Diagnostic)
+        object.__setattr__(self, "diagnostics", diagnostics)
+        if self.status == ParseStatus.VALID:
+            if not isinstance(self.rule, Rule) or diagnostics:
+                raise ValueError("valid ParseResult requires Rule and no diagnostics")
+        elif self.rule is not None or not diagnostics:
+            raise ValueError("invalid/unsupported ParseResult requires diagnostics and no Rule")
+        if self.status != ParseStatus.VALID:
+            if any(item.category not in ("invalid", "unsupported") for item in diagnostics):
+                raise ValueError("parse diagnostics must be invalid or unsupported")
+            has_invalid = any(item.category == "invalid" for item in diagnostics)
+            if has_invalid != (self.status == ParseStatus.INVALID):
+                raise ValueError("ParseResult status must give invalid diagnostics precedence")
 
 
 @dataclass(frozen=True)
