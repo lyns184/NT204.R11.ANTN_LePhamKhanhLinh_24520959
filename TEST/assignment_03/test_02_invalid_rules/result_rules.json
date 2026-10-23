@@ -1,0 +1,289 @@
+{
+  "enabled_rules": [
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 80,
+          "end": 80
+        },
+        "action": "alert"
+      },
+      "sid": 100201,
+      "rev": 1,
+      "msg": "Valid before errors",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 1
+      },
+      "raw_text": "alert tcp any any -> any 80 (msg:\"Valid before errors\"; sid:100201; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 8080,
+          "end": 8080
+        },
+        "action": "alert"
+      },
+      "sid": 100206,
+      "rev": 1,
+      "msg": "Valid after errors",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 6
+      },
+      "raw_text": "alert tcp any any -> any 8080 (msg:\"Valid after errors\"; sid:100206; rev:1;)"
+    }
+  ],
+  "files": [
+    {
+      "path": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+      "status": "loaded",
+      "lines_read": 6,
+      "diagnostic": null
+    }
+  ],
+  "entries": [
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 1
+      },
+      "status": "enabled",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": 80,
+            "end": 80
+          },
+          "action": "alert"
+        },
+        "sid": 100201,
+        "rev": 1,
+        "msg": "Valid before errors",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+          "line": 1
+        },
+        "raw_text": "alert tcp any any -> any 80 (msg:\"Valid before errors\"; sid:100201; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 2
+      },
+      "status": "invalid",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "missing_parenthesis",
+          "reason": "Rule must contain a complete parenthesized option list",
+          "category": "invalid",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+            "line": 2
+          },
+          "keyword": null
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 3
+      },
+      "status": "invalid",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "out_of_range",
+          "reason": "dst_port exceeds supported maximum 65535",
+          "category": "invalid",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+            "line": 3
+          },
+          "keyword": "dst_port"
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 4
+      },
+      "status": "invalid",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "missing_identification",
+          "reason": "Missing required sid",
+          "category": "invalid",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+            "line": 4
+          },
+          "keyword": "sid"
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 5
+      },
+      "status": "invalid",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "unterminated_string",
+          "reason": "Unterminated quoted string or dangling escape",
+          "category": "invalid",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+            "line": 5
+          },
+          "keyword": null
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 6
+      },
+      "status": "enabled",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": 8080,
+            "end": 8080
+          },
+          "action": "alert"
+        },
+        "sid": 100206,
+        "rev": 1,
+        "msg": "Valid after errors",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+          "line": 6
+        },
+        "raw_text": "alert tcp any any -> any 8080 (msg:\"Valid after errors\"; sid:100206; rev:1;)"
+      },
+      "diagnostics": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "missing_parenthesis",
+      "reason": "Rule must contain a complete parenthesized option list",
+      "category": "invalid",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 2
+      },
+      "keyword": null
+    },
+    {
+      "code": "out_of_range",
+      "reason": "dst_port exceeds supported maximum 65535",
+      "category": "invalid",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 3
+      },
+      "keyword": "dst_port"
+    },
+    {
+      "code": "missing_identification",
+      "reason": "Missing required sid",
+      "category": "invalid",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 4
+      },
+      "keyword": "sid"
+    },
+    {
+      "code": "unterminated_string",
+      "reason": "Unterminated quoted string or dangling escape",
+      "category": "invalid",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_02_invalid_rules\\input.rules",
+        "line": 5
+      },
+      "keyword": null
+    }
+  ],
+  "counts": {
+    "files_requested": 1,
+    "files_loaded": 1,
+    "files_disabled": 0,
+    "files_duplicate": 0,
+    "lines_read": 6,
+    "rules_total": 6,
+    "rules_enabled": 2,
+    "rules_invalid": 4,
+    "rules_unsupported": 0,
+    "rules_disabled": 0,
+    "rules_duplicate": 0
+  }
+}

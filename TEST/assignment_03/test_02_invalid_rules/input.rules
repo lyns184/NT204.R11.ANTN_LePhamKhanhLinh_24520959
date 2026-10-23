@@ -1,0 +1,6 @@
+alert tcp any any -> any 80 (msg:"Valid before errors"; sid:100201; rev:1;)
+alert tcp any any -> any 80 (msg:"Missing parenthesis"; sid:100202; rev:1;
+alert tcp any any -> any 99999 (msg:"Invalid port"; sid:100203; rev:1;)
+alert tcp any any -> any 80 (msg:"Missing SID"; rev:1;)
+alert tcp any any -> any 80 (msg:"Unclosed message; sid:100205; rev:1;)
+alert tcp any any -> any 8080 (msg:"Valid after errors"; sid:100206; rev:1;)
