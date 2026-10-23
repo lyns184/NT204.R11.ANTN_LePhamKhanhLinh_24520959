@@ -1,0 +1,5 @@
+alert tcp any any -> any any (msg:"Any selectors"; sid:100401; rev:1;)
+alert tcp 10.0.0.1 12345 -> 10.0.0.2 80 (msg:"Single IPv4 and ports"; sid:100402; rev:1;)
+alert tcp 10.0.0.0/24 1000:2000 -> 192.168.1.0/24 80:90 (msg:"CIDR and port ranges"; sid:100403; rev:1;)
+alert tcp any :1023 <> 10.0.0.2 8080: (msg:"Open ranges and bidirectional"; sid:100404; rev:1;)
+alert udp any 53000 -> 10.0.0.2 53 (msg:"UDP header"; sid:100405; rev:1;)

@@ -1,0 +1,186 @@
+{
+  "input_file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_04_header_parsing\\input.rules",
+  "counts": {
+    "rules_total": 5,
+    "rules_valid": 5,
+    "rules_invalid": 0,
+    "rules_unsupported": 0
+  },
+  "results": [
+    {
+      "status": "valid",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": null,
+            "end": null
+          },
+          "action": "alert"
+        },
+        "sid": 100401,
+        "rev": 1,
+        "msg": "Any selectors",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_04_header_parsing\\input.rules",
+          "line": 1
+        },
+        "raw_text": "alert tcp any any -> any any (msg:\"Any selectors\"; sid:100401; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "status": "valid",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": "10.0.0.1/32",
+          "src_port": {
+            "start": 12345,
+            "end": 12345
+          },
+          "direction": "->",
+          "dst_ip": "10.0.0.2/32",
+          "dst_port": {
+            "start": 80,
+            "end": 80
+          },
+          "action": "alert"
+        },
+        "sid": 100402,
+        "rev": 1,
+        "msg": "Single IPv4 and ports",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_04_header_parsing\\input.rules",
+          "line": 2
+        },
+        "raw_text": "alert tcp 10.0.0.1 12345 -> 10.0.0.2 80 (msg:\"Single IPv4 and ports\"; sid:100402; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "status": "valid",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": "10.0.0.0/24",
+          "src_port": {
+            "start": 1000,
+            "end": 2000
+          },
+          "direction": "->",
+          "dst_ip": "192.168.1.0/24",
+          "dst_port": {
+            "start": 80,
+            "end": 90
+          },
+          "action": "alert"
+        },
+        "sid": 100403,
+        "rev": 1,
+        "msg": "CIDR and port ranges",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_04_header_parsing\\input.rules",
+          "line": 3
+        },
+        "raw_text": "alert tcp 10.0.0.0/24 1000:2000 -> 192.168.1.0/24 80:90 (msg:\"CIDR and port ranges\"; sid:100403; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "status": "valid",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": 0,
+            "end": 1023
+          },
+          "direction": "<>",
+          "dst_ip": "10.0.0.2/32",
+          "dst_port": {
+            "start": 8080,
+            "end": 65535
+          },
+          "action": "alert"
+        },
+        "sid": 100404,
+        "rev": 1,
+        "msg": "Open ranges and bidirectional",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_04_header_parsing\\input.rules",
+          "line": 4
+        },
+        "raw_text": "alert tcp any :1023 <> 10.0.0.2 8080: (msg:\"Open ranges and bidirectional\"; sid:100404; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "status": "valid",
+      "rule": {
+        "header": {
+          "protocol": "udp",
+          "src_ip": null,
+          "src_port": {
+            "start": 53000,
+            "end": 53000
+          },
+          "direction": "->",
+          "dst_ip": "10.0.0.2/32",
+          "dst_port": {
+            "start": 53,
+            "end": 53
+          },
+          "action": "alert"
+        },
+        "sid": 100405,
+        "rev": 1,
+        "msg": "UDP header",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_04_header_parsing\\input.rules",
+          "line": 5
+        },
+        "raw_text": "alert udp any 53000 -> 10.0.0.2 53 (msg:\"UDP header\"; sid:100405; rev:1;)"
+      },
+      "diagnostics": []
+    }
+  ]
+}

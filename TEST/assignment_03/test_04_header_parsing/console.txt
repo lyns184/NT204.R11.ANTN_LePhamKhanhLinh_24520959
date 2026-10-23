@@ -1,0 +1,24 @@
+T04: real Parser, direct rule text; no PCAP, events or matching.
+Line 1: VALID sid=100401, rev=1, msg='Any selectors'
+  Input: alert tcp any any -> any any (msg:"Any selectors"; sid:100401; rev:1;)
+  Header: {"action": "alert", "protocol": "tcp", "src_ip": null, "src_port": {"start": null, "end": null}, "direction": "->", "dst_ip": null, "dst_port": {"start": null, "end": null}}
+  Typed IP/port selectors, source and raw_text verified.
+Line 2: VALID sid=100402, rev=1, msg='Single IPv4 and ports'
+  Input: alert tcp 10.0.0.1 12345 -> 10.0.0.2 80 (msg:"Single IPv4 and ports"; sid:100402; rev:1;)
+  Header: {"action": "alert", "protocol": "tcp", "src_ip": "10.0.0.1/32", "src_port": {"start": 12345, "end": 12345}, "direction": "->", "dst_ip": "10.0.0.2/32", "dst_port": {"start": 80, "end": 80}}
+  Typed IP/port selectors, source and raw_text verified.
+Line 3: VALID sid=100403, rev=1, msg='CIDR and port ranges'
+  Input: alert tcp 10.0.0.0/24 1000:2000 -> 192.168.1.0/24 80:90 (msg:"CIDR and port ranges"; sid:100403; rev:1;)
+  Header: {"action": "alert", "protocol": "tcp", "src_ip": "10.0.0.0/24", "src_port": {"start": 1000, "end": 2000}, "direction": "->", "dst_ip": "192.168.1.0/24", "dst_port": {"start": 80, "end": 90}}
+  Typed IP/port selectors, source and raw_text verified.
+Line 4: VALID sid=100404, rev=1, msg='Open ranges and bidirectional'
+  Input: alert tcp any :1023 <> 10.0.0.2 8080: (msg:"Open ranges and bidirectional"; sid:100404; rev:1;)
+  Header: {"action": "alert", "protocol": "tcp", "src_ip": null, "src_port": {"start": 0, "end": 1023}, "direction": "<>", "dst_ip": "10.0.0.2/32", "dst_port": {"start": 8080, "end": 65535}}
+  Typed IP/port selectors, source and raw_text verified.
+Line 5: VALID sid=100405, rev=1, msg='UDP header'
+  Input: alert udp any 53000 -> 10.0.0.2 53 (msg:"UDP header"; sid:100405; rev:1;)
+  Header: {"action": "alert", "protocol": "udp", "src_ip": null, "src_port": {"start": 53000, "end": 53000}, "direction": "->", "dst_ip": "10.0.0.2/32", "dst_port": {"start": 53, "end": 53}}
+  Typed IP/port selectors, source and raw_text verified.
+Counts: {"rules_total": 5, "rules_valid": 5, "rules_invalid": 0, "rules_unsupported": 0}
+JSON report read back successfully; input.rules unchanged.
+PASS T04: 5 valid headers; any/IPv4/CIDR, single/closed/open port ranges, directions and metadata parsed into the expected Rule Objects.
