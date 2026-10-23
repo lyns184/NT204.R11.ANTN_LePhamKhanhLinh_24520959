@@ -1,4 +1,4 @@
-"""Core Engine modules và Header Matcher; chưa có full-rule evaluation."""
+"""Core Engine evaluation; chưa tích hợp Detection Generator hoặc capture CLI."""
 
 from ids.detection.config import RuleConfig, RuleConfigError, load_rule_config
 from ids.detection.loader import LoadReport, RuleLoadError, load_rules
@@ -8,6 +8,8 @@ from ids.detection.flow_matcher import FlowMatchResult, match_flow
 from ids.detection.payload import PayloadResult, prepare_payload
 from ids.detection.packet_matcher import PacketMatchResult, match_flags, match_dsize
 from ids.detection.content_matcher import ContentMatchResult, ContentSearchLimits, match_contents
+from ids.detection.matcher import match_rule
+from ids.detection.engine import EvaluationEngine, EvaluationMetrics, EvaluationResult
 
 from ids.detection.models import (
     ContentCondition,
@@ -46,4 +48,5 @@ __all__ = [
     "FlowContextResult", "build_flow_context", "FlowMatchResult", "match_flow",
     "PayloadResult", "prepare_payload", "PacketMatchResult", "match_flags", "match_dsize",
     "ContentMatchResult", "ContentSearchLimits", "match_contents",
+    "match_rule", "EvaluationEngine", "EvaluationMetrics", "EvaluationResult",
 ]
