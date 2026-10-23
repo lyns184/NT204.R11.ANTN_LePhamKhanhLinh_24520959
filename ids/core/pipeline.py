@@ -53,8 +53,10 @@ def process_packet(
     # Lỗi lấy payload không được làm dừng việc phân tích packet.
     try:
         event.raw_payload = get_transport_payload(packet)
+        event.payload_extraction_succeeded = True
     except Exception as error:
         event.raw_payload = b""
+        event.payload_extraction_succeeded = False
         event.parse_errors.append(
             f"Payload extraction error: {error}"
         )

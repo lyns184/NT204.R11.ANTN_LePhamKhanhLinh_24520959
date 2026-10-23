@@ -5,6 +5,8 @@ from ids.detection.loader import LoadReport, RuleLoadError, load_rules
 from ids.detection.header_matcher import HeaderMatchResult, match_header
 from ids.detection.flow_context import FlowContextResult, build_flow_context
 from ids.detection.flow_matcher import FlowMatchResult, match_flow
+from ids.detection.payload import PayloadResult, prepare_payload
+from ids.detection.packet_matcher import PacketMatchResult, match_flags, match_dsize
 
 from ids.detection.models import (
     ContentCondition,
@@ -41,4 +43,5 @@ __all__ = [
     "RuleRepository",
     "HeaderMatchResult", "match_header",
     "FlowContextResult", "build_flow_context", "FlowMatchResult", "match_flow",
+    "PayloadResult", "prepare_payload", "PacketMatchResult", "match_flags", "match_dsize",
 ]

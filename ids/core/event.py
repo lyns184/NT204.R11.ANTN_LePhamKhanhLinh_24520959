@@ -117,6 +117,11 @@ class IDSEvent:
     flow_tracking_status: Literal["not_processed", "tracked", "skipped", "error"] = "not_processed"
     flow_tracking_reason: str | None = None
 
+    # Provenance nội bộ: None chưa extraction, False lỗi, True lấy bytes thành công.
+    # Không suy thành công từ raw_payload == b"" và không đưa cờ này vào JSONL.
+    payload_extraction_succeeded: bool | None = field(default=None, repr=False,
+                                                      metadata={"export": False})
+
     def to_dict(self) -> dict[str, Any]:
         """Xuất bản sao JSON-safe, loại raw_payload và giữ nguyên event gốc.
 
@@ -125,7 +130,7 @@ class IDSEvent:
         """
         values = {
             item.name: getattr(self, item.name, None)
-            for item in fields(self) if item.name != "raw_payload"
+            for item in fields(self) if item.name != "raw_payload" and item.metadata.get("export", True)
         }
         errors: list[str] = []
         data = _json_safe_copy(values, "event", errors, set())
