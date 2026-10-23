@@ -1,7 +1,8 @@
-"""Core Engine models, parser, loader/config và index; chưa có evaluation."""
+"""Core Engine modules và Header Matcher; chưa có full-rule evaluation."""
 
 from ids.detection.config import RuleConfig, RuleConfigError, load_rule_config
 from ids.detection.loader import LoadReport, RuleLoadError, load_rules
+from ids.detection.header_matcher import HeaderMatchResult, match_header
 
 from ids.detection.models import (
     ContentCondition,
@@ -36,4 +37,5 @@ __all__ = [
     "RuleConfig", "RuleConfigError", "load_rule_config",
     "LoadReport", "RuleLoadError", "load_rules",
     "RuleRepository",
+    "HeaderMatchResult", "match_header",
 ]
