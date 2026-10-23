@@ -3,6 +3,8 @@
 from ids.detection.config import RuleConfig, RuleConfigError, load_rule_config
 from ids.detection.loader import LoadReport, RuleLoadError, load_rules
 from ids.detection.header_matcher import HeaderMatchResult, match_header
+from ids.detection.flow_context import FlowContextResult, build_flow_context
+from ids.detection.flow_matcher import FlowMatchResult, match_flow
 
 from ids.detection.models import (
     ContentCondition,
@@ -38,4 +40,5 @@ __all__ = [
     "LoadReport", "RuleLoadError", "load_rules",
     "RuleRepository",
     "HeaderMatchResult", "match_header",
+    "FlowContextResult", "build_flow_context", "FlowMatchResult", "match_flow",
 ]

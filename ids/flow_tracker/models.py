@@ -73,6 +73,42 @@ class TCPFlagCounters:
 
 
 @dataclass
+class TCPHandshakeEvidence:
+    """Bằng chứng riêng cho detection, không thay TCP state permissive Bài 2.
+
+    Một flow chỉ giữ một handshake candidate; mâu thuẫn vai trò/ISN làm
+    evidence unknown đến khi flow mới. Không reassembly hoặc map lịch sử.
+    """
+
+    client_direction: FlowDirection | None = None
+    syn_sequence: int | None = None
+    syn_end: int | None = None
+    syn_ack_sequence: int | None = None
+    syn_ack_end: int | None = None
+    client_next: int | None = None
+    established_confirmed: bool = False
+    conflicted: bool = False
+    established_for_packet: bool | None = None
+
+
+@dataclass(frozen=True)
+class FlowPacketSnapshot:
+    """Metadata đúng packet đã track; không tham chiếu FlowRecord mutable."""
+
+    flow_id: str
+    protocol: FlowProtocol
+    endpoint_a: Endpoint
+    endpoint_b: Endpoint
+    direction: FlowDirection
+    packet_id: int
+    timestamp: float
+    tcp_state: TCPState | None
+    client_direction: FlowDirection | None = None
+    established_for_packet: bool | None = None
+    handshake_observed: bool | None = None
+
+
+@dataclass
 class TCPTrackingState:
     """Quan sát điều khiển nội bộ; số end đã gồm SYN/FIN và payload nếu biết."""
 
@@ -89,6 +125,7 @@ class TCPTrackingState:
     backward_fin_seen: bool = False
     backward_fin_end: int | None = None
     backward_fin_acked: bool = False
+    detection: TCPHandshakeEvidence = field(default_factory=TCPHandshakeEvidence)
 
 
 @dataclass

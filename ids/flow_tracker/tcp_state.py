@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from ids.core.event import IDSEvent
 from ids.flow_tracker.models import (
-    FlowDirection, FlowRecord, TCPFlagCounters, TCPState, TCPTrackingState,
+    FlowDirection, FlowRecord, TCPFlagCounters, TCPHandshakeEvidence, TCPState, TCPTrackingState,
 )
 
 FLAG_NAMES = dict(zip("FSRPAUECN", ("FIN", "SYN", "RST", "PSH", "ACK", "URG", "ECE", "CWR", "NS")))
@@ -50,6 +50,75 @@ def _covers(ack: int | None, end: int | None) -> bool:
     return ack is None or end is None or (ack - end) % 2**32 < 2**31
 
 
+def _acks_syn(ack: int | None, start: int | None, end: int | None) -> bool:
+    # SYN chiếm một sequence number; ACK không được vượt phần đã quan sát.
+    # Cho phép peer chỉ ACK SYN hoặc một phần data mang trên SYN (RFC 9293).
+    return (ack is not None and start is not None and end is not None
+            and 0 < (ack - start) % 2**32 <= (end - start) % 2**32)
+
+
+def _update_evidence(evidence: TCPHandshakeEvidence, flags: dict[str, bool] | None,
+                     sequence: int | None, ack: int | None, payload: int | None,
+                     direction: FlowDirection) -> None:
+    """Handshake đủ số liệu mới xác nhận; không dựa vào state suy đoán.
+
+    SYN/SYNACK hợp lệ của packet hiện tại cho known-false trước xác nhận.
+    ACK/data/FIN/RST đứng riêng là unknown. Latch xác nhận giữ qua đóng flow.
+    """
+    evidence.established_for_packet = True if evidence.established_confirmed else None
+    if evidence.conflicted:
+        evidence.established_for_packet = None
+        return
+    if flags is None or any(name not in flags for name in ("SYN", "ACK", "FIN", "RST")):
+        return
+    syn, ack_flag, fin, rst = (flags[name] for name in ("SYN", "ACK", "FIN", "RST"))
+    if fin or rst:
+        return
+    opposite = "backward" if direction == "forward" else "forward"
+    end = (sequence + payload + 1) % 2**32 if sequence is not None and payload is not None else None
+    if syn and not ack_flag and sequence is not None:
+        if (evidence.client_direction not in (None, direction)
+                or evidence.syn_sequence not in (None, sequence)):
+            evidence.conflicted = True
+        else:
+            if evidence.syn_sequence is None:
+                # SYNACK thấy trước SYN không chứng minh thứ tự ba bước.
+                evidence.syn_ack_sequence = evidence.syn_ack_end = evidence.client_next = None
+            evidence.client_direction = direction
+            evidence.syn_sequence = sequence
+            if end is not None:
+                if evidence.syn_end not in (None, end):
+                    evidence.conflicted = True
+                evidence.syn_end = end
+                if not evidence.established_confirmed:
+                    evidence.established_for_packet = False
+    elif syn and ack_flag and sequence is not None and ack is not None:
+        if evidence.client_direction not in (None, opposite):
+            evidence.conflicted = True
+        elif (evidence.syn_sequence is None
+              or _acks_syn(ack, evidence.syn_sequence, evidence.syn_end)):
+            evidence.client_direction = opposite
+            if (evidence.syn_ack_sequence not in (None, sequence)
+                    or evidence.client_next not in (None, ack)
+                    or (end is not None and evidence.syn_ack_end not in (None, end))):
+                evidence.conflicted = True
+            else:
+                evidence.syn_ack_sequence = sequence
+                evidence.syn_ack_end = end
+                evidence.client_next = ack
+                if end is not None and not evidence.established_confirmed:
+                    evidence.established_for_packet = False
+    elif (not syn and ack_flag and sequence is not None and ack is not None
+          and direction == evidence.client_direction
+          and evidence.syn_sequence is not None and evidence.syn_end is not None
+          and sequence == evidence.client_next
+          and _acks_syn(ack, evidence.syn_ack_sequence, evidence.syn_ack_end)):
+        evidence.established_confirmed = True
+        evidence.established_for_packet = True
+    if evidence.conflicted:
+        evidence.established_for_packet = None
+
+
 def prepare_tcp_update(flow: FlowRecord, event: IDSEvent, direction: FlowDirection) -> TCPUpdate | None:
     """Tính trên bản sao; lỗi không được thay đổi state/counters flow cũ.
 
@@ -72,6 +141,7 @@ def prepare_tcp_update(flow: FlowRecord, event: IDSEvent, direction: FlowDirecti
     state, reason = flow.state, flow.close_reason
     if tracking is None or counters is None or state is None:
         raise ValueError("TCP flow is missing internal tracking state")
+    _update_evidence(tracking.detection, flags, sequence, ack, payload, direction)
     if flags is None:
         return TCPUpdate(state, tracking, counters, reason)
     syn, ack_flag, fin, rst = (flags.get(name, False) for name in ("SYN", "ACK", "FIN", "RST"))

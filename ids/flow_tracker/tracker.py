@@ -9,7 +9,7 @@ from uuid import uuid4
 from ids.core.config import FlowTrackerConfig
 from ids.core.event import IDSEvent
 from ids.flow_tracker.identity import extract_flow_identity, get_flow_direction
-from ids.flow_tracker.models import FlowDirection, FlowKey, FlowRecord, TCPState
+from ids.flow_tracker.models import FlowDirection, FlowKey, FlowPacketSnapshot, FlowRecord, TCPState
 from ids.flow_tracker.statistics import update_flow_statistics
 from ids.flow_tracker.tcp_state import apply_tcp_update, prepare_tcp_update
 
@@ -24,6 +24,7 @@ class FlowTrackingResult:
     reason: str | None = None
     # Caller xuất ngay; tracker không giữ queue flow đã đóng trong bộ nhớ.
     completed_flows: tuple[dict[str, Any], ...] = ()
+    snapshot: FlowPacketSnapshot | None = None
 
 
 class FlowTracker:
@@ -164,5 +165,16 @@ class FlowTracker:
             )
         event.flow_id = flow.flow_id
         event.direction = direction
+        evidence = flow.tcp_tracking.detection if flow.tcp_tracking is not None else None
+        established = evidence.established_for_packet if evidence is not None else None
+        snapshot = FlowPacketSnapshot(
+            flow_id=flow.flow_id, protocol=flow.protocol, endpoint_a=flow.endpoint_a,
+            endpoint_b=flow.endpoint_b, direction=direction, packet_id=event.packet_id,
+            timestamp=identity.timestamp, tcp_state=flow.state,
+            client_direction=(evidence.client_direction
+                              if evidence is not None and not evidence.conflicted else None),
+            established_for_packet=established,
+            handshake_observed=(True if established is True else False if established is False else None),
+        )
         return FlowTrackingResult("tracked", flow=flow, direction=direction,
-                                  completed_flows=tuple(completed))
+                                  completed_flows=tuple(completed), snapshot=snapshot)
