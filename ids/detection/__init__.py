@@ -7,6 +7,7 @@ from ids.detection.flow_context import FlowContextResult, build_flow_context
 from ids.detection.flow_matcher import FlowMatchResult, match_flow
 from ids.detection.payload import PayloadResult, prepare_payload
 from ids.detection.packet_matcher import PacketMatchResult, match_flags, match_dsize
+from ids.detection.content_matcher import ContentMatchResult, ContentSearchLimits, match_contents
 
 from ids.detection.models import (
     ContentCondition,
@@ -44,4 +45,5 @@ __all__ = [
     "HeaderMatchResult", "match_header",
     "FlowContextResult", "build_flow_context", "FlowMatchResult", "match_flow",
     "PayloadResult", "prepare_payload", "PacketMatchResult", "match_flags", "match_dsize",
+    "ContentMatchResult", "ContentSearchLimits", "match_contents",
 ]
