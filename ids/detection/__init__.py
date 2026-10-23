@@ -1,4 +1,4 @@
-"""Core Engine evaluation; chưa tích hợp Detection Generator hoặc capture CLI."""
+"""Core Engine, context adapters và Detection Generator cho PCAP/live."""
 
 from ids.detection.config import RuleConfig, RuleConfigError, load_rule_config
 from ids.detection.loader import LoadReport, RuleLoadError, load_rules
@@ -10,6 +10,9 @@ from ids.detection.packet_matcher import PacketMatchResult, match_flags, match_d
 from ids.detection.content_matcher import ContentMatchResult, ContentSearchLimits, match_contents
 from ids.detection.matcher import match_rule
 from ids.detection.engine import EvaluationEngine, EvaluationMetrics, EvaluationResult
+from ids.detection.context import make_inspection_context
+from ids.detection.generator import generate_detection
+from ids.detection.session import DetectionSession
 
 from ids.detection.models import (
     ContentCondition,
@@ -49,4 +52,5 @@ __all__ = [
     "PayloadResult", "prepare_payload", "PacketMatchResult", "match_flags", "match_dsize",
     "ContentMatchResult", "ContentSearchLimits", "match_contents",
     "match_rule", "EvaluationEngine", "EvaluationMetrics", "EvaluationResult",
+    "make_inspection_context", "generate_detection", "DetectionSession",
 ]

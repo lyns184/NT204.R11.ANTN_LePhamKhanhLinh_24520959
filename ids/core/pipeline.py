@@ -24,7 +24,7 @@ from ids.decoder.http import (
 )
 from ids.decoder.smtp_session import SMTPDataTracker
 from ids.preprocessor.processor import preprocess_event
-from ids.flow_tracker import FlowTracker
+from ids.flow_tracker import FlowTracker, FlowTrackingResult
 
 def process_packet(
     packet: Packet,
@@ -35,6 +35,7 @@ def process_packet(
     preprocessor_config: PreprocessorConfig | None = None,
     flow_tracker: FlowTracker | None = None,
     flow_summary_handler: Callable[[dict[str, Any]], None] | None = None,
+    inspection_handler: Callable[[IDSEvent, FlowTrackingResult | None], None] | None = None,
 ) -> IDSEvent:
     """
     Chuyển packet Scapy thành IDSEvent chuẩn hóa.
@@ -234,6 +235,7 @@ def process_packet(
 
     # Dùng chung cho live/PCAP; skip vẫn trả event để output ghi đầy đủ.
     event = preprocess_event(event, preprocessor_config)
+    result = None
     if flow_tracker is not None:
         try:
             result = flow_tracker.track(event)
@@ -250,4 +252,8 @@ def process_packet(
             if flow_summary_handler is not None:
                 for summary in result.completed_flows:
                     flow_summary_handler(summary)
+    # Snapshot đi cùng packet, kể cả flow đã đóng. Không chứa callback/I/O
+    # trong try của tracker: lỗi output phải propagate đến capture caller.
+    if inspection_handler is not None:
+        inspection_handler(event, result)
     return event

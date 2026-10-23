@@ -533,12 +533,12 @@ class DetectionEvent(JSONModel):
     sid: int
     rev: int
     msg: str
-    src_ip: str
-    dst_ip: str
-    src_port: int
-    dst_port: int
-    protocol: Literal["TCP", "UDP"]
-    application_protocol: str
+    src_ip: str | None
+    dst_ip: str | None
+    src_port: int | None
+    dst_port: int | None
+    protocol: Literal["TCP", "UDP"] | None
+    application_protocol: str | None
     matched_info: MatchedInfo
     packet_id: int | None = None
     classtype: str | None = None
@@ -552,12 +552,14 @@ class DetectionEvent(JSONModel):
             _integer(self.packet_id, "detection.packet_id", 1)
         for name in ("src_ip", "dst_ip"):
             value = getattr(self, name)
-            if not isinstance(value, str) or str(IPv4Address(value)) != value:
+            if value is not None and (not isinstance(value, str) or str(IPv4Address(value)) != value):
                 raise ValueError(f"detection.{name} must be a canonical IPv4 string")
-        _integer(self.src_port, "detection.src_port", 0, 65535)
-        _integer(self.dst_port, "detection.dst_port", 0, 65535)
-        _choice(self.protocol, "detection.protocol", ("TCP", "UDP"))
-        _text(self.application_protocol, "detection.application_protocol")
+        for name in ("src_port", "dst_port"):
+            if getattr(self, name) is not None:
+                _integer(getattr(self, name), f"detection.{name}", 0, 65535)
+        if self.protocol is not None:
+            _choice(self.protocol, "detection.protocol", ("TCP", "UDP"))
+        _text(self.application_protocol, "detection.application_protocol", optional=True)
         _text(self.flow_id, "detection.flow_id", optional=True)
         if not isinstance(self.matched_info, MatchedInfo):
             raise ValueError("detection.matched_info must be MatchedInfo")
