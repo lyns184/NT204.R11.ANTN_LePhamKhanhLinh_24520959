@@ -1,4 +1,4 @@
-"""Core Engine models, parser và loader/config; chưa có evaluation."""
+"""Core Engine models, parser, loader/config và index; chưa có evaluation."""
 
 from ids.detection.config import RuleConfig, RuleConfigError, load_rule_config
 from ids.detection.loader import LoadReport, RuleLoadError, load_rules
@@ -25,6 +25,7 @@ from ids.detection.models import (
     RuleSource,
 )
 from ids.detection.parser import parse_rule
+from ids.detection.repository import RuleRepository
 
 __all__ = [
     "ContentCondition", "ContentMatch", "DSizeCondition", "DetectionEvent",
@@ -34,4 +35,5 @@ __all__ = [
     "RuleHeader", "RuleSource", "parse_rule",
     "RuleConfig", "RuleConfigError", "load_rule_config",
     "LoadReport", "RuleLoadError", "load_rules",
+    "RuleRepository",
 ]
