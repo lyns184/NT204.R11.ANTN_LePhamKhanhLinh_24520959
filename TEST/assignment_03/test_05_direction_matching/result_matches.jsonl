@@ -1,0 +1,10 @@
+{"packet_id": 1, "sid": 100501, "status": "MATCH", "orientation": "direct", "reason_code": null, "reason": null, "diagnostics": []}
+{"packet_id": 1, "sid": 100502, "status": "MATCH", "orientation": "direct", "reason_code": null, "reason": null, "diagnostics": []}
+{"packet_id": 2, "sid": 100501, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}
+{"packet_id": 2, "sid": 100502, "status": "MATCH", "orientation": "reverse", "reason_code": null, "reason": null, "diagnostics": []}
+{"packet_id": 3, "sid": 100501, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}
+{"packet_id": 3, "sid": 100502, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}
+{"packet_id": 4, "sid": 100501, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}
+{"packet_id": 4, "sid": 100502, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}
+{"packet_id": 5, "sid": 100501, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}
+{"packet_id": 5, "sid": 100502, "status": "NO_MATCH", "orientation": null, "reason_code": "header_no_match", "reason": "Header does not match in any permitted orientation", "diagnostics": []}

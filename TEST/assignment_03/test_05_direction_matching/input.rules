@@ -1,0 +1,2 @@
+alert tcp 10.0.0.1 12345 -> 10.0.0.2 80 (msg:"Forward only"; sid:100501; rev:1;)
+alert tcp 10.0.0.1 12345 <> 10.0.0.2 80 (msg:"Both directions"; sid:100502; rev:1;)
