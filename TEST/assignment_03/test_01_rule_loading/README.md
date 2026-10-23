@@ -40,7 +40,7 @@ Chạy tại thư mục gốc project trong PowerShell:
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Console]::OutputEncoding
 
-& .\.venv\Scripts\python.exe -X utf8 TEST\assignment3\test_01_rule_loading\check_rule_loading.py
+& .\.venv\Scripts\python.exe -X utf8 TEST\assignment_03\test_01_rule_loading\check_rule_loading.py
 if ($LASTEXITCODE -ne 0) { throw "T01 failed" }
 ```
 

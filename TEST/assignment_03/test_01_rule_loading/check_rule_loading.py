@@ -29,7 +29,7 @@ def run_checks(log):
     require(lines[1] == "" and lines[3] == "", "Fixture must contain two blank lines")
     expected_lines = [3, 6]
     expected_sids = [100001, 100002]
-    log.append("Input: TEST/assignment3/test_01_rule_loading/input.rules\n")
+    log.append("Input: TEST/assignment_03/test_01_rule_loading/input.rules\n")
     log.append("Fixture: 6 lines = 2 comments + 2 blank lines + 2 valid rules.\n")
 
     # Chỉ ghi nhận lời gọi; wraps vẫn chạy Parser thật trên từng dòng.

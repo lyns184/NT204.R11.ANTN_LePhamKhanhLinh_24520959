@@ -26,7 +26,7 @@
       "classtype": null,
       "priority": null,
       "source": {
-        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
         "line": 3
       },
       "raw_text": "alert tcp any any -> any 80 (msg:\"HTTP test\"; sid:100001; rev:1;)"
@@ -57,7 +57,7 @@
       "classtype": null,
       "priority": null,
       "source": {
-        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
         "line": 6
       },
       "raw_text": "alert udp any any -> any 53 (msg:\"DNS test\"; sid:100002; rev:1;)"
@@ -65,7 +65,7 @@
   ],
   "files": [
     {
-      "path": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+      "path": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
       "status": "loaded",
       "lines_read": 6,
       "diagnostic": null
@@ -74,7 +74,7 @@
   "entries": [
     {
       "source": {
-        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
         "line": 3
       },
       "status": "enabled",
@@ -104,7 +104,7 @@
         "classtype": null,
         "priority": null,
         "source": {
-          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
           "line": 3
         },
         "raw_text": "alert tcp any any -> any 80 (msg:\"HTTP test\"; sid:100001; rev:1;)"
@@ -113,7 +113,7 @@
     },
     {
       "source": {
-        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
         "line": 6
       },
       "status": "enabled",
@@ -143,7 +143,7 @@
         "classtype": null,
         "priority": null,
         "source": {
-          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_01_rule_loading\\input.rules",
           "line": 6
         },
         "raw_text": "alert udp any any -> any 53 (msg:\"DNS test\"; sid:100002; rev:1;)"

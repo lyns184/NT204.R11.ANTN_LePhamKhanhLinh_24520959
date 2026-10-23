@@ -1,4 +1,4 @@
-Input: TEST/assignment3/test_01_rule_loading/input.rules
+Input: TEST/assignment_03/test_01_rule_loading/input.rules
 Fixture: 6 lines = 2 comments + 2 blank lines + 2 valid rules.
 Parser calls: 2; received exactly the original rule text at lines 3 and 6.
 Comments at lines 1/5 and blank lines at lines 2/4 were not passed to Parser.
