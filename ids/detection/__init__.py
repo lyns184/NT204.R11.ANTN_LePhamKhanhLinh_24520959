@@ -1,4 +1,7 @@
-"""Core Engine models và Snort 2-style rule parser; chưa có evaluation."""
+"""Core Engine models, parser và loader/config; chưa có evaluation."""
+
+from ids.detection.config import RuleConfig, RuleConfigError, load_rule_config
+from ids.detection.loader import LoadReport, RuleLoadError, load_rules
 
 from ids.detection.models import (
     ContentCondition,
@@ -29,4 +32,6 @@ __all__ = [
     "InspectionContext", "MatchedInfo", "MatchResult", "MatchStatus",
     "ParseResult", "ParseStatus", "PayloadStatus", "PortSpec", "Rule",
     "RuleHeader", "RuleSource", "parse_rule",
+    "RuleConfig", "RuleConfigError", "load_rule_config",
+    "LoadReport", "RuleLoadError", "load_rules",
 ]
