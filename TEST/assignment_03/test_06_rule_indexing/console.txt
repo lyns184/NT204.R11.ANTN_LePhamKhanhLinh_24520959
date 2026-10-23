@@ -1,0 +1,14 @@
+T06: real Loader and Repository; direct simulated contexts, no PCAP or matching.
+tcp_port_80: transport={"protocol": "TCP", "src_port": 12345, "dst_port": 80}; expected=[100601, 100604, 100605]; actual=[100601, 100604, 100605]; PASS.
+tcp_range_start: transport={"protocol": "TCP", "src_port": 12345, "dst_port": 8000}; expected=[100602, 100604, 100605]; actual=[100602, 100604, 100605]; PASS.
+tcp_range_end: transport={"protocol": "TCP", "src_port": 12345, "dst_port": 8080}; expected=[100602, 100604, 100605]; actual=[100602, 100604, 100605]; PASS.
+tcp_below_range: transport={"protocol": "TCP", "src_port": 12345, "dst_port": 7999}; expected=[100604, 100605]; actual=[100604, 100605]; PASS.
+tcp_above_range: transport={"protocol": "TCP", "src_port": 12345, "dst_port": 8081}; expected=[100604, 100605]; actual=[100604, 100605]; PASS.
+udp_dns: transport={"protocol": "UDP", "src_port": 53000, "dst_port": 53}; expected=[100603, 100604]; actual=[100603, 100604]; PASS.
+udp_other_port: transport={"protocol": "UDP", "src_port": 53000, "dst_port": 9999}; expected=[100604]; actual=[100604]; PASS.
+tcp_443_forward: transport={"protocol": "TCP", "src_port": 12345, "dst_port": 443}; expected=[100604, 100605, 100606]; actual=[100604, 100605, 100606]; PASS.
+tcp_443_reverse: transport={"protocol": "TCP", "src_port": 443, "dst_port": 12345}; expected=[100604, 100605, 100606]; actual=[100604, 100605, 100606]; PASS.
+tcp_443_both_orientations: transport={"protocol": "TCP", "src_port": 443, "dst_port": 443}; expected=[100604, 100605, 100606]; actual=[100604, 100605, 100606]; PASS.
+tcp_missing_dst_port: transport={"protocol": "TCP", "src_port": 12345}; expected=[100601, 100602, 100604, 100605, 100606]; actual=[100601, 100602, 100604, 100605, 100606]; PASS.
+JSON report read back successfully; contexts, rules and input.rules unchanged.
+PASS T06: 6 rules, 11 contexts; candidate membership/order/dedup correct, ip bucket retained for TCP/UDP, range boundaries and missing destination port handled.

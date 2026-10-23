@@ -1,0 +1,565 @@
+{
+  "input_kind": "direct_simulated_context",
+  "rules": [
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 80,
+          "end": 80
+        },
+        "action": "alert"
+      },
+      "sid": 100601,
+      "rev": 1,
+      "msg": "TCP port 80",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_06_rule_indexing\\input.rules",
+        "line": 1
+      },
+      "raw_text": "alert tcp any any -> any 80 (msg:\"TCP port 80\"; sid:100601; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 8000,
+          "end": 8080
+        },
+        "action": "alert"
+      },
+      "sid": 100602,
+      "rev": 1,
+      "msg": "TCP port range",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_06_rule_indexing\\input.rules",
+        "line": 2
+      },
+      "raw_text": "alert tcp any any -> any 8000:8080 (msg:\"TCP port range\"; sid:100602; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "udp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 53,
+          "end": 53
+        },
+        "action": "alert"
+      },
+      "sid": 100603,
+      "rev": 1,
+      "msg": "UDP port 53",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_06_rule_indexing\\input.rules",
+        "line": 3
+      },
+      "raw_text": "alert udp any any -> any 53 (msg:\"UDP port 53\"; sid:100603; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "ip",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": null,
+          "end": null
+        },
+        "action": "alert"
+      },
+      "sid": 100604,
+      "rev": 1,
+      "msg": "IPv4 general rule",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_06_rule_indexing\\input.rules",
+        "line": 4
+      },
+      "raw_text": "alert ip any any -> any any (msg:\"IPv4 general rule\"; sid:100604; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": null,
+          "end": null
+        },
+        "action": "alert"
+      },
+      "sid": 100605,
+      "rev": 1,
+      "msg": "TCP wildcard ports",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_06_rule_indexing\\input.rules",
+        "line": 5
+      },
+      "raw_text": "alert tcp any any -> any any (msg:\"TCP wildcard ports\"; sid:100605; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "<>",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 443,
+          "end": 443
+        },
+        "action": "alert"
+      },
+      "sid": 100606,
+      "rev": 1,
+      "msg": "TCP port 443 both directions",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_06_rule_indexing\\input.rules",
+        "line": 6
+      },
+      "raw_text": "alert tcp any any <> any 443 (msg:\"TCP port 443 both directions\"; sid:100606; rev:1;)"
+    }
+  ],
+  "counts": {
+    "rules_loaded": 6,
+    "cases_total": 11,
+    "cases_passed": 11
+  },
+  "cases": [
+    {
+      "case": "tcp_port_80",
+      "context": {
+        "timestamp": 101.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345,
+            "dst_port": 80
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100601,
+        100604,
+        100605
+      ],
+      "candidate_sids": [
+        100601,
+        100604,
+        100605
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_range_start",
+      "context": {
+        "timestamp": 102.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345,
+            "dst_port": 8000
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100602,
+        100604,
+        100605
+      ],
+      "candidate_sids": [
+        100602,
+        100604,
+        100605
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_range_end",
+      "context": {
+        "timestamp": 103.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345,
+            "dst_port": 8080
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100602,
+        100604,
+        100605
+      ],
+      "candidate_sids": [
+        100602,
+        100604,
+        100605
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_below_range",
+      "context": {
+        "timestamp": 104.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345,
+            "dst_port": 7999
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100604,
+        100605
+      ],
+      "candidate_sids": [
+        100604,
+        100605
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_above_range",
+      "context": {
+        "timestamp": 105.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345,
+            "dst_port": 8081
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100604,
+        100605
+      ],
+      "candidate_sids": [
+        100604,
+        100605
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "udp_dns",
+      "context": {
+        "timestamp": 106.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "UDP",
+            "src_port": 53000,
+            "dst_port": 53
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100603,
+        100604
+      ],
+      "candidate_sids": [
+        100603,
+        100604
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "udp_other_port",
+      "context": {
+        "timestamp": 107.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "UDP",
+            "src_port": 53000,
+            "dst_port": 9999
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100604
+      ],
+      "candidate_sids": [
+        100604
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_443_forward",
+      "context": {
+        "timestamp": 108.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345,
+            "dst_port": 443
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100604,
+        100605,
+        100606
+      ],
+      "candidate_sids": [
+        100604,
+        100605,
+        100606
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_443_reverse",
+      "context": {
+        "timestamp": 109.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 443,
+            "dst_port": 12345
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100604,
+        100605,
+        100606
+      ],
+      "candidate_sids": [
+        100604,
+        100605,
+        100606
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_443_both_orientations",
+      "context": {
+        "timestamp": 110.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 443,
+            "dst_port": 443
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100604,
+        100605,
+        100606
+      ],
+      "candidate_sids": [
+        100604,
+        100605,
+        100606
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "tcp_missing_dst_port",
+      "context": {
+        "timestamp": 111.0,
+        "normalized": {
+          "network": {
+            "protocol": "IPv4",
+            "src_ip": "10.0.0.1",
+            "dst_ip": "10.0.0.2"
+          },
+          "transport": {
+            "protocol": "TCP",
+            "src_port": 12345
+          }
+        },
+        "processing_action": "process",
+        "packet_id": null,
+        "payload_status": "missing",
+        "flow": null,
+        "diagnostics": []
+      },
+      "expected_sids": [
+        100601,
+        100602,
+        100604,
+        100605,
+        100606
+      ],
+      "candidate_sids": [
+        100601,
+        100602,
+        100604,
+        100605,
+        100606
+      ],
+      "result": "PASS"
+    }
+  ]
+}

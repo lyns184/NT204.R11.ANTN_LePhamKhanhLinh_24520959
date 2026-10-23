@@ -1,0 +1,6 @@
+alert tcp any any -> any 80 (msg:"TCP port 80"; sid:100601; rev:1;)
+alert tcp any any -> any 8000:8080 (msg:"TCP port range"; sid:100602; rev:1;)
+alert udp any any -> any 53 (msg:"UDP port 53"; sid:100603; rev:1;)
+alert ip any any -> any any (msg:"IPv4 general rule"; sid:100604; rev:1;)
+alert tcp any any -> any any (msg:"TCP wildcard ports"; sid:100605; rev:1;)
+alert tcp any any <> any 443 (msg:"TCP port 443 both directions"; sid:100606; rev:1;)
