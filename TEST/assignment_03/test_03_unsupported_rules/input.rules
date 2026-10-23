@@ -1,0 +1,5 @@
+alert tcp any any -> any 80 (msg:"Valid before unsupported"; sid:100301; rev:1;)
+alert tcp any any -> any 80 (msg:"Unsupported PCRE"; sid:100302; rev:1; pcre:"/never-match/";)
+alert tcp any any -> any 80 (msg:"Unsupported HTTP URI"; sid:100303; rev:1; content:"admin"; http_uri;)
+alert tcp any any -> any 80 (msg:"Unsupported byte test"; sid:100304; rev:1; byte_test:1,=,65,0;)
+alert tcp any any -> any 8080 (msg:"Valid after unsupported"; sid:100305; rev:1;)

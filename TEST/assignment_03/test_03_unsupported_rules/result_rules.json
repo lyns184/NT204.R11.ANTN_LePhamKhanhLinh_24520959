@@ -1,0 +1,259 @@
+{
+  "enabled_rules": [
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 80,
+          "end": 80
+        },
+        "action": "alert"
+      },
+      "sid": 100301,
+      "rev": 1,
+      "msg": "Valid before unsupported",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 1
+      },
+      "raw_text": "alert tcp any any -> any 80 (msg:\"Valid before unsupported\"; sid:100301; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 8080,
+          "end": 8080
+        },
+        "action": "alert"
+      },
+      "sid": 100305,
+      "rev": 1,
+      "msg": "Valid after unsupported",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 5
+      },
+      "raw_text": "alert tcp any any -> any 8080 (msg:\"Valid after unsupported\"; sid:100305; rev:1;)"
+    }
+  ],
+  "files": [
+    {
+      "path": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+      "status": "loaded",
+      "lines_read": 5,
+      "diagnostic": null
+    }
+  ],
+  "entries": [
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 1
+      },
+      "status": "enabled",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": 80,
+            "end": 80
+          },
+          "action": "alert"
+        },
+        "sid": 100301,
+        "rev": 1,
+        "msg": "Valid before unsupported",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+          "line": 1
+        },
+        "raw_text": "alert tcp any any -> any 80 (msg:\"Valid before unsupported\"; sid:100301; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 2
+      },
+      "status": "unsupported",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "unsupported_keyword",
+          "reason": "Keyword pcre is outside the MVP",
+          "category": "unsupported",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+            "line": 2
+          },
+          "keyword": "pcre"
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 3
+      },
+      "status": "unsupported",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "unsupported_keyword",
+          "reason": "Keyword http_uri is outside the MVP",
+          "category": "unsupported",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+            "line": 3
+          },
+          "keyword": "http_uri"
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 4
+      },
+      "status": "unsupported",
+      "rule": null,
+      "diagnostics": [
+        {
+          "code": "unsupported_keyword",
+          "reason": "Keyword byte_test is outside the MVP",
+          "category": "unsupported",
+          "source": {
+            "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+            "line": 4
+          },
+          "keyword": "byte_test"
+        }
+      ]
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 5
+      },
+      "status": "enabled",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": 8080,
+            "end": 8080
+          },
+          "action": "alert"
+        },
+        "sid": 100305,
+        "rev": 1,
+        "msg": "Valid after unsupported",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+          "line": 5
+        },
+        "raw_text": "alert tcp any any -> any 8080 (msg:\"Valid after unsupported\"; sid:100305; rev:1;)"
+      },
+      "diagnostics": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "unsupported_keyword",
+      "reason": "Keyword pcre is outside the MVP",
+      "category": "unsupported",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 2
+      },
+      "keyword": "pcre"
+    },
+    {
+      "code": "unsupported_keyword",
+      "reason": "Keyword http_uri is outside the MVP",
+      "category": "unsupported",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 3
+      },
+      "keyword": "http_uri"
+    },
+    {
+      "code": "unsupported_keyword",
+      "reason": "Keyword byte_test is outside the MVP",
+      "category": "unsupported",
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment_03\\test_03_unsupported_rules\\input.rules",
+        "line": 4
+      },
+      "keyword": "byte_test"
+    }
+  ],
+  "counts": {
+    "files_requested": 1,
+    "files_loaded": 1,
+    "files_disabled": 0,
+    "files_duplicate": 0,
+    "lines_read": 5,
+    "rules_total": 5,
+    "rules_enabled": 2,
+    "rules_invalid": 0,
+    "rules_unsupported": 3,
+    "rules_disabled": 0,
+    "rules_duplicate": 0
+  }
+}
