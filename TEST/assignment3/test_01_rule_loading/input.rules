@@ -1,0 +1,6 @@
+# Rule kiem tra HTTP
+
+alert tcp any any -> any 80 (msg:"HTTP test"; sid:100001; rev:1;)
+
+    # Rule kiem tra DNS
+alert udp any any -> any 53 (msg:"DNS test"; sid:100002; rev:1;)

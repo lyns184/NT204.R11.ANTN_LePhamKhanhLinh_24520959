@@ -1,0 +1,168 @@
+{
+  "enabled_rules": [
+    {
+      "header": {
+        "protocol": "tcp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 80,
+          "end": 80
+        },
+        "action": "alert"
+      },
+      "sid": 100001,
+      "rev": 1,
+      "msg": "HTTP test",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "line": 3
+      },
+      "raw_text": "alert tcp any any -> any 80 (msg:\"HTTP test\"; sid:100001; rev:1;)"
+    },
+    {
+      "header": {
+        "protocol": "udp",
+        "src_ip": null,
+        "src_port": {
+          "start": null,
+          "end": null
+        },
+        "direction": "->",
+        "dst_ip": null,
+        "dst_port": {
+          "start": 53,
+          "end": 53
+        },
+        "action": "alert"
+      },
+      "sid": 100002,
+      "rev": 1,
+      "msg": "DNS test",
+      "contents": [],
+      "flow": null,
+      "flags": null,
+      "dsize": null,
+      "classtype": null,
+      "priority": null,
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "line": 6
+      },
+      "raw_text": "alert udp any any -> any 53 (msg:\"DNS test\"; sid:100002; rev:1;)"
+    }
+  ],
+  "files": [
+    {
+      "path": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+      "status": "loaded",
+      "lines_read": 6,
+      "diagnostic": null
+    }
+  ],
+  "entries": [
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "line": 3
+      },
+      "status": "enabled",
+      "rule": {
+        "header": {
+          "protocol": "tcp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": 80,
+            "end": 80
+          },
+          "action": "alert"
+        },
+        "sid": 100001,
+        "rev": 1,
+        "msg": "HTTP test",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+          "line": 3
+        },
+        "raw_text": "alert tcp any any -> any 80 (msg:\"HTTP test\"; sid:100001; rev:1;)"
+      },
+      "diagnostics": []
+    },
+    {
+      "source": {
+        "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+        "line": 6
+      },
+      "status": "enabled",
+      "rule": {
+        "header": {
+          "protocol": "udp",
+          "src_ip": null,
+          "src_port": {
+            "start": null,
+            "end": null
+          },
+          "direction": "->",
+          "dst_ip": null,
+          "dst_port": {
+            "start": 53,
+            "end": 53
+          },
+          "action": "alert"
+        },
+        "sid": 100002,
+        "rev": 1,
+        "msg": "DNS test",
+        "contents": [],
+        "flow": null,
+        "flags": null,
+        "dsize": null,
+        "classtype": null,
+        "priority": null,
+        "source": {
+          "file": "D:\\Documents\\hk1-2026\\h\u1ec7 th\u1ed1ng\\idps\\NT204.R11.ANTN_LePhamKhanhLinh_24520959\\TEST\\assignment3\\test_01_rule_loading\\input.rules",
+          "line": 6
+        },
+        "raw_text": "alert udp any any -> any 53 (msg:\"DNS test\"; sid:100002; rev:1;)"
+      },
+      "diagnostics": []
+    }
+  ],
+  "diagnostics": [],
+  "counts": {
+    "files_requested": 1,
+    "files_loaded": 1,
+    "files_disabled": 0,
+    "files_duplicate": 0,
+    "lines_read": 6,
+    "rules_total": 2,
+    "rules_enabled": 2,
+    "rules_invalid": 0,
+    "rules_unsupported": 0,
+    "rules_disabled": 0,
+    "rules_duplicate": 0
+  }
+}

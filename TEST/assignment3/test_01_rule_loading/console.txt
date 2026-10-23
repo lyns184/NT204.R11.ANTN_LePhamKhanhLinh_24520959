@@ -1,0 +1,9 @@
+Input: TEST/assignment3/test_01_rule_loading/input.rules
+Fixture: 6 lines = 2 comments + 2 blank lines + 2 valid rules.
+Parser calls: 2; received exactly the original rule text at lines 3 and 6.
+Comments at lines 1/5 and blank lines at lines 2/4 were not passed to Parser.
+Rule line 3: sid=100001, rev=1, msg='HTTP test', header=alert tcp any any -> any 80; enabled.
+Rule line 6: sid=100002, rev=1, msg='DNS test', header=alert udp any any -> any 53; enabled.
+Counts: {"files_requested": 1, "files_loaded": 1, "files_disabled": 0, "files_duplicate": 0, "lines_read": 6, "rules_total": 2, "rules_enabled": 2, "rules_invalid": 0, "rules_unsupported": 0, "rules_disabled": 0, "rules_duplicate": 0}
+JSON report read back successfully; input.rules unchanged.
+PASS T01: 2 valid rules enabled in order; comments/blank lines skipped before Parser; metadata and JSON report correct.
