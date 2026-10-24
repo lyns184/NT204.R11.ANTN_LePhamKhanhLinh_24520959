@@ -13,5 +13,6 @@ Lưu dữ liệu, cách tái hiện và kết quả kiểm thử Core Engine the
 5. [T05 - Direction Matching](test_05_direction_matching/README.md): match đúng chiều `->`/`<>`, đảo đầy đủ IP/port và giữ orientation trong detection.
 6. [T06 - Rule Indexing](test_06_rule_indexing/README.md): chọn candidate theo protocol/port, giữ thứ tự, dedup và xử lý port thiếu.
 7. [T07 - Header Short-Circuit](test_07_header_short_circuit/README.md): dừng rule có header không khớp trước khi gọi Content Matcher.
+8. [T08 - Flow Matching](test_08_flow_matching/README.md): kiểm tra to_server/to_client, established/not_established theo snapshot từng packet và giữ unknown cho midstream.
 
-T08–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
+T09–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
