@@ -1,0 +1,1 @@
+alert tcp 10.0.0.1 any -> 10.0.0.2 80 (msg:"Header before content"; sid:100701; rev:1; content:"admin";)

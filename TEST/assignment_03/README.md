@@ -12,5 +12,6 @@ Lưu dữ liệu, cách tái hiện và kết quả kiểm thử Core Engine the
 4. [T04 - Header Parsing](test_04_header_parsing/README.md): parse any/IPv4/CIDR, port/range và direction thành Rule Object đúng.
 5. [T05 - Direction Matching](test_05_direction_matching/README.md): match đúng chiều `->`/`<>`, đảo đầy đủ IP/port và giữ orientation trong detection.
 6. [T06 - Rule Indexing](test_06_rule_indexing/README.md): chọn candidate theo protocol/port, giữ thứ tự, dedup và xử lý port thiếu.
+7. [T07 - Header Short-Circuit](test_07_header_short_circuit/README.md): dừng rule có header không khớp trước khi gọi Content Matcher.
 
-T07–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
+T08–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
