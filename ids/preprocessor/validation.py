@@ -174,7 +174,9 @@ def validate_event(event: IDSEvent) -> ValidationResult:
                 ("window_size", 65535), ("urgent_pointer", 65535),
             ):
                 integer(transport.get(field), f"transport.{field}", 0, maximum)
-            if transport.get("flags") is not None:
+            # Scapy represents a TCP packet with all flags clear as "".
+            # Only that exact empty string is valid; other text still uses normal validation.
+            if transport.get("flags") is not None and transport["flags"] != "":
                 text(transport["flags"], "transport.flags")
             flags = transport.get("flags_detail")
             if flags is not None:

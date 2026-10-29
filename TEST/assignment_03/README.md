@@ -17,5 +17,6 @@ Lưu dữ liệu, cách tái hiện và kết quả kiểm thử Core Engine the
 9. [T09 - Content / Nocase](test_09_content_nocase/README.md): phân biệt hoa/thường theo nocase, dùng raw payload và giữ đúng bytes/vị trí match.
 10. [T10 - Offset / Depth](test_10_offset_depth/README.md): giới hạn vùng tìm theo offset/depth, kiểm tra vừa khít/vượt biên và payload ngắn.
 11. [T11 - Distance / Within](test_11_distance_within/README.md): vùng tìm tương đối giữa hai content, biên distance/within và thử lại content đầu khi cần.
+12. [T12 - Flags / Dsize](test_12_flags_dsize/README.md): bộ cờ TCP chính xác, ngưỡng kích thước payload và phép AND flags/dsize, gồm payload rỗng/UTF-8.
 
-T12–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
+T13–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.

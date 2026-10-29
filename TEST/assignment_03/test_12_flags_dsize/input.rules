@@ -1,0 +1,6 @@
+alert tcp any any -> any 80 (msg:"SYN without payload"; sid:101201; rev:1; flags:S; dsize:0;)
+alert tcp any any -> any 80 (msg:"SYN ACK without payload"; sid:101202; rev:1; flags:SA; dsize:0;)
+alert tcp any any -> any 80 (msg:"PSH ACK five payload bytes"; sid:101203; rev:1; flags:PA; dsize:5;)
+alert tcp any any -> any 80 (msg:"Payload smaller than five bytes"; sid:101204; rev:1; dsize:<5;)
+alert tcp any any -> any 80 (msg:"Payload larger than five bytes"; sid:101205; rev:1; dsize:>5;)
+alert tcp any any -> any 80 (msg:"No flags and no payload"; sid:101206; rev:1; flags:0; dsize:0;)
