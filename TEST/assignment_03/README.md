@@ -18,5 +18,6 @@ Lưu dữ liệu, cách tái hiện và kết quả kiểm thử Core Engine the
 10. [T10 - Offset / Depth](test_10_offset_depth/README.md): giới hạn vùng tìm theo offset/depth, kiểm tra vừa khít/vượt biên và payload ngắn.
 11. [T11 - Distance / Within](test_11_distance_within/README.md): vùng tìm tương đối giữa hai content, biên distance/within và thử lại content đầu khi cần.
 12. [T12 - Flags / Dsize](test_12_flags_dsize/README.md): bộ cờ TCP chính xác, ngưỡng kích thước payload và phép AND flags/dsize, gồm payload rỗng/UTF-8.
+13. [T13 - Multiple Matches](test_13_multiple_matches/README.md): giữ đủ nhiều rule match một packet, không trùng detection theo occurrence và không loại packet lặp cùng flow.
 
-T13–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
+T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.

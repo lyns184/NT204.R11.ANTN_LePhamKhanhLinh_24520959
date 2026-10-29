@@ -1,0 +1,4 @@
+alert tcp any any -> any 80 (msg:"Admin marker"; sid:101301; rev:1; content:"admin";)
+alert tcp any any -> any 80 (msg:"Root marker"; sid:101302; rev:1; content:"root";)
+alert tcp any any -> any 80 (msg:"Login marker"; sid:101303; rev:1; content:"login";)
+alert tcp any any -> any 80 (msg:"Nonempty payload"; sid:101304; rev:1; dsize:>0;)
