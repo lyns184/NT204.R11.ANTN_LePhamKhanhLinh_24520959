@@ -19,5 +19,6 @@ Lưu dữ liệu, cách tái hiện và kết quả kiểm thử Core Engine the
 11. [T11 - Distance / Within](test_11_distance_within/README.md): vùng tìm tương đối giữa hai content, biên distance/within và thử lại content đầu khi cần.
 12. [T12 - Flags / Dsize](test_12_flags_dsize/README.md): bộ cờ TCP chính xác, ngưỡng kích thước payload và phép AND flags/dsize, gồm payload rỗng/UTF-8.
 13. [T13 - Multiple Matches](test_13_multiple_matches/README.md): giữ đủ nhiều rule match một packet, không trùng detection theo occurrence và không loại packet lặp cùng flow.
+14. [T14 - Detection Schema](test_14_detection_schema/README.md): đủ field/kiểu/giá trị detection, metadata null, protocol/endpoint thực tế và Unicode/binary JSONL.
 
-T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
+Đã có hồ sơ T01–T14. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả; xem console/kết quả từng test để đối chiếu.
