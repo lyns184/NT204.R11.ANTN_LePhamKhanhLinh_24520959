@@ -1,0 +1,4 @@
+alert tcp any any -> any 80 (msg:"Unrestricted admin"; sid:101001; rev:1; content:"admin";)
+alert tcp any any -> any 80 (msg:"Admin after offset"; sid:101002; rev:1; content:"admin"; offset:4;)
+alert tcp any any -> any 80 (msg:"Admin inside depth"; sid:101003; rev:1; content:"admin"; depth:5;)
+alert tcp any any -> any 80 (msg:"Admin offset and depth"; sid:101004; rev:1; content:"admin"; offset:4; depth:5;)
