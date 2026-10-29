@@ -1,0 +1,2 @@
+alert tcp any any -> any 80 (msg:"Case sensitive admin"; sid:100901; rev:1; content:"admin";)
+alert tcp any any -> any 80 (msg:"Case insensitive admin"; sid:100902; rev:1; content:"admin"; nocase;)

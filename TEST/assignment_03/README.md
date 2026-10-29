@@ -14,5 +14,6 @@ Lưu dữ liệu, cách tái hiện và kết quả kiểm thử Core Engine the
 6. [T06 - Rule Indexing](test_06_rule_indexing/README.md): chọn candidate theo protocol/port, giữ thứ tự, dedup và xử lý port thiếu.
 7. [T07 - Header Short-Circuit](test_07_header_short_circuit/README.md): dừng rule có header không khớp trước khi gọi Content Matcher.
 8. [T08 - Flow Matching](test_08_flow_matching/README.md): kiểm tra to_server/to_client, established/not_established theo snapshot từng packet và giữ unknown cho midstream.
+9. [T09 - Content / Nocase](test_09_content_nocase/README.md): phân biệt hoa/thường theo nocase, dùng raw payload và giữ đúng bytes/vị trí match.
 
-T09–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
+T10–T14 chưa thực hiện. README trong từng test có lệnh chạy từ thư mục gốc project và giải thích kết quả.
