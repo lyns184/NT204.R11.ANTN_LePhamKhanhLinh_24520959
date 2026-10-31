@@ -1,37 +1,33 @@
 # NT204 – Xây dựng hệ thống IDS/IDPS theo mô-đun
 
-**Trạng thái: đã triển khai Bài 1–3; Bài 3 có đủ hồ sơ kiểm thử T01–T14.**
-
 ## Giới thiệu
 
-Repository phục vụ môn học NT204, xây dựng hệ thống IDS/IDPS theo kiến trúc mô-đun. Project hiện có các chức năng thu thập packet, phân tích giao thức, giải mã dữ liệu ứng dụng, tiền xử lý, theo dõi flow/kết nối và phát hiện theo rule Snort 2-style trong phạm vi được hỗ trợ.
+Đây là project môn NT204, xây dựng hệ thống IDS/IDPS theo từng mô-đun. Hệ thống có thể bắt gói tin trực tiếp hoặc đọc file PCAP, phân tích dữ liệu, theo dõi kết nối và phát hiện các gói tin khớp với rule. Phần phát hiện hiện hỗ trợ một số thành phần của cú pháp Snort 2, được liệt kê bên dưới.
 
 **Assignment 01 – Packet Capture & Parser:**
 
-- Bắt packet trực tiếp từ network interface hoặc đọc từ file PCAP.
+- Bắt gói tin trực tiếp từ card mạng hoặc đọc từ file PCAP.
 - Phân tích IPv4, TCP và UDP; nhận diện HTTP/1.x, DNS và SMTP.
-- Tạo `IDSEvent`, ghi thông tin phân tích và lỗi theo định dạng JSON Lines.
-- Xử lý packet malformed và giao thức chưa hỗ trợ để tiếp tục với packet phía sau.
+- Tạo `IDSEvent` cho gói tin và ghi kết quả phân tích, lỗi vào file JSON Lines.
+- Ghi nhận gói tin sai định dạng hoặc giao thức chưa hỗ trợ, sau đó tiếp tục xử lý các gói tin còn lại.
 
 **Assignment 02 – Decoder, Preprocessor & Flow/Connection Tracker:**
 
-- Giải mã HTTP URI, form, HTML entity và text theo charset; giải mã SMTP MIME Base64/Quoted-Printable.
-- Kiểm tra tính hợp lệ của event, chuẩn hóa protocol/header/domain và bổ sung field tùy chọn bị thiếu.
-- Gom packet hai chiều vào cùng flow, theo dõi TCP handshake, FIN/ACK, RST và idle timeout.
-- Thống kê packet, byte, TCP flags và thời gian của flow; xuất flow summary riêng.
+- Giải mã URI, form, HTML entity và văn bản theo charset trong HTTP; giải mã Base64/Quoted-Printable trong SMTP MIME.
+- Kiểm tra event, chuẩn hóa tên giao thức, header, domain và bổ sung các trường tùy chọn còn thiếu.
+- Gom các gói tin hai chiều vào cùng một flow; theo dõi quá trình bắt tay TCP, FIN/ACK, RST và thời gian không hoạt động.
+- Thống kê số gói tin, số byte, cờ TCP và thời gian của từng flow, rồi ghi vào file tổng kết riêng.
 
 **Assignment 03 – Core Engine & Snort Rule Matching:**
 
-- Nạp/parse/validate rule, phân loại valid/invalid/unsupported, cho phép tắt rule hoặc file rule bằng cấu hình.
-- Chọn candidate theo protocol/port, so khớp header, flow/state, content/modifier, flags và dsize.
-- Đánh giá toàn bộ candidate, cho phép nhiều rule match một event và thống kê số event/candidate/match.
-- Sinh Detection Event thống nhất và ghi detection JSONL riêng khi bật `--rules`.
-
-
+- Đọc và kiểm tra rule, phân loại thành hợp lệ, không hợp lệ hoặc chưa hỗ trợ. Có thể tắt từng rule hoặc cả file rule bằng cấu hình.
+- Chọn các rule cần kiểm tra theo giao thức và port, sau đó so khớp header, trạng thái flow, nội dung và các tùy chọn đi kèm, cờ TCP, kích thước payload.
+- Kiểm tra tất cả rule đã chọn. Một event có thể khớp nhiều rule; số event, số rule được xét và số lượt khớp được thống kê trong quá trình chạy.
+- Tạo Detection Event theo cùng một cấu trúc và ghi vào file JSONL riêng khi sử dụng `--rules`.
 
 ## Kiến trúc hệ thống
 
-Hai nguồn dữ liệu dùng chung pipeline xử lý:
+Gói tin bắt trực tiếp và gói tin đọc từ PCAP đều đi qua cùng một quy trình xử lý:
 
 ```mermaid
 flowchart TD
@@ -54,26 +50,24 @@ flowchart TD
     O --> P[Detection JSONL]
 ```
 
-
-
 ### Các lớp chính
 
 | Lớp | Chức năng |
 |---|---|
-| Capture | Thu thập packet từ interface hoặc đọc PCAP |
+| Capture | Bắt gói tin từ card mạng hoặc đọc file PCAP |
 | Core | Định nghĩa `IDSEvent`, cấu hình và điều phối pipeline |
 | Network parser | Phân tích IPv4 |
 | Transport parser | Phân tích TCP và UDP |
 | Application parser | Nhận diện và phân tích HTTP/1.x, DNS, SMTP |
-| Decoder | Giải mã dữ liệu ứng dụng, ghi status và lỗi |
-| Preprocessor | Validation, normalization, bổ sung field thiếu và quyết định process/skip |
+| Decoder | Giải mã dữ liệu ứng dụng, ghi trạng thái và lỗi |
+| Preprocessor | Kiểm tra, chuẩn hóa, bổ sung trường còn thiếu và quyết định xử lý hoặc bỏ qua event |
 | Flow Tracker | Gom flow hai chiều, theo dõi trạng thái và thống kê |
 | Rule Loader | Đọc nhiều file rule, bỏ comment/dòng trống, áp dụng cấu hình bật/tắt |
-| Rule Parser / Validator | Chuyển rule text thành model, báo invalid/unsupported kèm lý do |
-| Repository / Indexer | Lưu rule hợp lệ, chọn candidate theo protocol/port |
-| Matching Engine | Kiểm tra header → flow → flags → dsize → content; loại sớm khi đã biết không match |
-| Evaluation Engine | Duyệt candidate, giữ nhiều MATCH và counters cộng dồn |
-| Detection Generator | Tạo detection từ MATCH cùng SID, giữ metadata packet/rule và evidence |
+| Rule Parser / Validator | Phân tích rule thành cấu trúc dữ liệu, báo rõ lý do nếu rule không hợp lệ hoặc chưa được hỗ trợ |
+| Repository / Indexer | Lưu rule hợp lệ và chọn các rule cần xét theo giao thức, port |
+| Matching Engine | Kiểm tra lần lượt header → flow → flags → dsize → content; dừng kiểm tra rule ngay khi một điều kiện không khớp |
+| Evaluation Engine | Duyệt các rule cần xét, ghi nhận tất cả rule khớp và cập nhật thống kê |
+| Detection Generator | Tạo detection cho từng SID khớp, kèm thông tin gói tin, rule và dữ liệu làm căn cứ phát hiện |
 | Output | Ghi event, flow summary và detection vào các file JSONL riêng |
 
 ## Cấu trúc thư mục
@@ -103,11 +97,11 @@ NT204.R11.ANTN_LePhamKhanhLinh_24520959/
 └── requirements.txt
 ```
 
-Sơ đồ lược bỏ các file `__init__.py` và chi tiết từng test để dễ đọc.
+Cây thư mục trên không liệt kê các file `__init__.py` và toàn bộ file trong từng test.
 
 ### Quy ước thư mục kiểm thử
 
-Một test dùng PCAP thường có:
+Các test sử dụng PCAP thường được sắp xếp như sau:
 
 ```text
 test_xx_ten_test/
@@ -118,22 +112,22 @@ test_xx_ten_test/
 └── result_flows.jsonl        # Khi test cần kiểm tra flow summary
 ```
 
-- `README.md`: mục tiêu, dữ liệu đầu vào, cách chạy, kết quả và giải thích.
-- `input.pcap`: packet đầu vào, có ghi rõ nguồn dữ liệu.
-- `result.jsonl`: một event cho mỗi packet được xử lý.
+- `README.md`: mô tả mục tiêu, dữ liệu đầu vào, cách chạy và kết quả của test.
+- `input.pcap`: các gói tin dùng để kiểm thử. Nguồn dữ liệu được ghi trong README của test.
+- `result.jsonl`: kết quả xử lý, mỗi gói tin tương ứng với một event.
 - `result_flows.jsonl`: thống kê flow; dùng cho các test Flow Tracker.
-- `console.txt`: output khi chạy chương trình và kiểm tra.
+- `console.txt`: nội dung hiển thị trên console khi chạy và kiểm tra kết quả.
 
-Một số test có script `check_*.py` tự đối chiếu kết quả hoặc tạo event/context trực tiếp trong bộ nhớ. 
+Một số test có thêm script `check_*.py` để tự đối chiếu kết quả hoặc tạo event và context trực tiếp trong bộ nhớ.
 
 ## Yêu cầu môi trường
 
 - Python **3.10 trở lên**.
 - Scapy **2.7.0**, được khai báo trong `requirements.txt`.
-- Git để clone repository.
-- Trên Windows: Npcap để live capture; quyền truy cập interface phù hợp.
+- Git để tải mã nguồn.
+- Nếu bắt gói tin trực tiếp trên Windows, cần cài Npcap và có quyền truy cập card mạng.
 
-Project được phát triển và kiểm thử trên Windows với PowerShell. Các lệnh bên dưới dùng môi trường này; Visual Studio Code là công cụ biên tập tùy chọn.
+Project được phát triển và kiểm thử trên Windows bằng PowerShell, nên các lệnh bên dưới viết cho môi trường này. Có thể dùng Visual Studio Code hoặc trình soạn thảo khác để làm việc với mã nguồn.
 
 ## Cài đặt
 
@@ -156,7 +150,7 @@ py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-Các lệnh `python` tiếp theo dùng Python trong virtual environment đã kích hoạt. Có thể gọi trực tiếp `.\.venv\Scripts\python.exe` nếu không kích hoạt.
+Sau khi kích hoạt, lệnh `python` sẽ dùng Python trong môi trường ảo. Nếu không kích hoạt, có thể thay `python` bằng `.\.venv\Scripts\python.exe` trong các lệnh bên dưới.
 
 ### 4. Cài đặt thư viện
 
@@ -167,13 +161,13 @@ python -c "import scapy; print(scapy.__version__)"
 
 ## Cách sử dụng
 
-Chạy các lệnh tại thư mục gốc project. Xem tùy chọn CLI:
+Chạy các lệnh dưới đây tại thư mục gốc của project. Để xem các tùy chọn:
 
 ```powershell
 python main.py --help
 ```
 
-Chọn một trong hai nguồn: `--interface` để live capture hoặc `--pcap` để đọc file. Chương trình ghi event và flow summary; thêm `--rules` để ghi detection vào file riêng.
+Dùng `--interface` để bắt gói tin trực tiếp hoặc `--pcap` để đọc file; mỗi lần chạy chọn một nguồn. Chương trình ghi event và thống kê flow ra các file riêng. Khi thêm `--rules`, chương trình kiểm tra rule và ghi thêm file detection.
 
 ### Liệt kê network interface
 
@@ -193,11 +187,11 @@ python -X utf8 main.py `
   --flow-output output\live_flows.jsonl
 ```
 
-`--count 0` (mặc định) bắt liên tục cho đến khi nhấn `Ctrl+C`. Live capture kiểm tra idle timeout cả khi không có packet mới.
+`--count 0` (mặc định) bắt liên tục cho đến khi nhấn `Ctrl+C`. Trong chế độ bắt trực tiếp, chương trình vẫn kiểm tra thời gian hết hạn của flow khi không có gói tin mới.
 
 ### Đọc file PCAP
 
-Ví dụ kiểm tra HTTP URL decoding bằng fixture T01:
+Ví dụ chạy bộ dữ liệu T01 để kiểm tra giải mã URL trong HTTP:
 
 ```powershell
 python -X utf8 main.py `
@@ -206,59 +200,13 @@ python -X utf8 main.py `
   --flow-output output\t01_flows.jsonl
 ```
 
-Để chạy fixture bài 1, thay đường dẫn PCAP bằng `TEST\assignment_01\test_01_tcp_handshake\input.pcap`.
+Để chạy dữ liệu kiểm thử của Bài 1, thay đường dẫn PCAP bằng `TEST\assignment_01\test_01_tcp_handshake\input.pcap`.
 
-### Bật Core Engine bằng rule
 
-Ví dụ dùng fixture T14 Bài 3, có bốn packet HTTP/DNS/binary và ba detection:
-
-```powershell
-python -X utf8 main.py `
-  --pcap TEST\assignment_03\test_14_detection_schema\input.pcap `
-  --rules TEST\assignment_03\test_14_detection_schema\input.rules `
-  --output output\detection_example\events.jsonl `
-  --flow-output output\detection_example\flows.jsonl `
-  --detection-output output\detection_example\detections.jsonl
-```
-
-| Tùy chọn | Ý nghĩa |
-|---|---|
-| `--rules` | File .rules; lặp lại tùy chọn để nạp nhiều file, theo thứ tự truyền vào |
-| `--rule-config` | File JSON tắt SID/file; cần có `--rules` |
-| `--detection-output` | File detection; mặc định `detections.jsonl` cạnh event output; cần có `--rules` |
-
-Live capture dùng cùng nhánh detection: thêm `--rules <file.rules>` vào lệnh `--interface`. Event bị skip vẫn được ghi vào event JSONL nhưng không được đánh giá rule. Một event có thể tạo nhiều detection, mỗi SID tối đa một detection cho event đó. Các event sau vẫn được đánh giá dù cùng flow hoặc payload giống nhau.
-
-Console có `[RULES]` với thống kê nạp rule, `[DETECTION SUMMARY]` với counters chạy Engine, và diagnostic `[DETECTION]` khi cần. Rule invalid/unsupported được báo lý do, loại toàn bộ rule rồi tiếp tục rule khác. Không còn rule hợp lệ đang bật hoặc không đọc được file rule đang bật thì chương trình báo thất bại. Các đường dẫn output phải khác nhau và không trùng input.
-
-### Cấu hình tắt rule hoặc file rule
-
-Mặc định các file được truyền bằng `--rules` và các rule hợp lệ trong đó đều bật. Ví dụ tạo `output/rule-config.json`, tắt toàn bộ file T13 và riêng SID101402 của T14:
-
-```powershell
-New-Item -ItemType Directory -Force output | Out-Null
-@'
-{
-  "disabled_files": ["../TEST/assignment_03/test_13_multiple_matches/input.rules"],
-  "disabled_sids": [101402]
-}
-'@ | Set-Content -Encoding UTF8 output\rule-config.json
-
-python -X utf8 main.py `
-  --pcap TEST\assignment_03\test_14_detection_schema\input.pcap `
-  --rules TEST\assignment_03\test_13_multiple_matches\input.rules `
-  --rules TEST\assignment_03\test_14_detection_schema\input.rules `
-  --rule-config output\rule-config.json `
-  --output output\config_example\events.jsonl `
-  --flow-output output\config_example\flows.jsonl `
-  --detection-output output\config_example\detections.jsonl
-```
-
-Đường dẫn `disabled_files` tính từ thư mục chứa JSON, nên `../TEST/...` ở ví dụ trên đi từ `output/` về root project. SID phải là số nguyên JSON. Ví dụ còn hai detection của T14: SID101401 và SID101403. Để bật lại, bỏ phần tử tương ứng khỏi danh sách hoặc bỏ `--rule-config`. File được liệt kê trong config không tự được nạp; đầu vào vẫn do các lần `--rules` quyết định.
 
 ### Phạm vi rule đang hỗ trợ
 
-Mỗi rule Snort 2-style nằm trên một dòng, options trong ngoặc và kết thúc bằng dấu `;`. Ví dụ:
+Mỗi rule viết theo cú pháp Snort 2 và nằm trên một dòng. Các tùy chọn đặt trong ngoặc, mỗi tùy chọn kết thúc bằng dấu `;`. Ví dụ:
 
 ```text
 alert tcp any any -> any 80 (msg:"Admin marker"; sid:101301; rev:1; content:"admin";)
@@ -267,14 +215,11 @@ alert tcp any any -> any 80 (msg:"Admin marker"; sid:101301; rev:1; content:"adm
 | Nhóm | Phạm vi |
 |---|---|
 | Header | `alert`; `tcp`, `udp`, `ip`; IP any/IPv4/CIDR; port any/single/range, gồm range mở; `->`, `<>` |
-| Identification | `msg`, `sid`, `rev`; SID enabled trùng thì giữ rule hợp lệ enabled đầu tiên |
+| Identification | `msg`, `sid`, `rev`; nếu các rule đang bật trùng SID, giữ rule hợp lệ đầu tiên |
 | Content | `content`, hex block, `nocase`, `offset`, `depth`, `distance`, `within` |
 | Packet/TCP | `flags` exact F/S/R/P/A/U/E/C hoặc `0`; `dsize:n`, `dsize:<n`, `dsize:>n`, literal 0–65535 |
 | Flow | TCP `to_server`, `to_client`, `established`, `not_established`, theo bằng chứng Tracker |
-| Classification | `classtype`, `priority`; thiếu thì detection ghi null |
-
-
-
+| Classification | `classtype`, `priority`; nếu không có, detection ghi `null` |
 
 ## Các giao thức đang hỗ trợ
 
@@ -287,11 +232,11 @@ alert tcp any any -> any 80 (msg:"Admin marker"; sid:101301; rev:1; content:"adm
 | Application | DNS | Query/response, transaction ID, questions và answers theo loại record |
 | Application | SMTP | Command, argument, response code/message |
 
-Nhận diện ứng dụng sử dụng cấu trúc payload và thông tin giao thức/port tùy trường hợp. SMTP DATA được Decoder theo dõi theo phiên để giải mã MIME; Parser không phân tích DATA như command/response.
+Tùy giao thức, hệ thống nhận diện ứng dụng dựa vào cấu trúc payload và thông tin giao thức hoặc port. Riêng SMTP DATA được Decoder theo dõi theo phiên để giải mã MIME; Parser không xử lý phần này như các lệnh và phản hồi SMTP.
 
 ## Cấu trúc IDS event
 
-JSONL chứa một JSON độc lập trên mỗi dòng. Ví dụ rút gọn từ packet HTTP của T01, lược bỏ các field header và metadata phụ:
+Trong file JSONL, mỗi dòng là một đối tượng JSON riêng. Dưới đây là event rút gọn từ gói tin HTTP của T01; một số trường header và metadata phụ đã được lược bỏ:
 
 ```json
 {
@@ -310,50 +255,35 @@ JSONL chứa một JSON độc lập trên mỗi dòng. Ví dụ rút gọn từ
 }
 ```
 
-Các nhóm field trong event đầy đủ:
+Event đầy đủ gồm các nhóm trường sau:
 
 | Field | Ý nghĩa |
 |---|---|
 | `packet_id`, `timestamp`, `capture_source` | Thứ tự, thời điểm và nguồn packet |
 | `network`, `transport`, `application` | Kết quả Parser |
-| `payload_length`, `packet_length` | Độ dài payload và độ dài packet nếu đã thu thập; field chưa có có thể là `null` |
+| `payload_length`, `packet_length` | Độ dài payload và gói tin nếu đã thu thập; trường chưa có dữ liệu có thể là `null` |
 | `parse_errors` | Lỗi phân tích |
 | `decoded`, `decode_status`, `decode_errors` | Kết quả giải mã, trạng thái và lỗi Decoder |
-| `normalized` | Bản chuẩn hóa riêng; giữ dữ liệu Parser/Decoder gốc |
-| `preprocess_status`, `processing_action`, `reason` | Kết quả validation và quyết định xử lý |
-| `flow_id`, `direction` | ID flow và chiều packet |
+| `normalized` | Dữ liệu đã chuẩn hóa, lưu riêng với dữ liệu gốc từ Parser và Decoder |
+| `preprocess_status`, `processing_action`, `reason` | Kết quả kiểm tra tính hợp lệ và quyết định xử lý |
+| `flow_id`, `direction` | ID flow và chiều của gói tin |
 | `flow_tracking_status`, `flow_tracking_reason` | Kết quả theo dõi flow |
-
 
 ### Flow summary
 
-File flow summary lưu thống kê của flow khi đóng, hết hạn hoặc kết thúc capture:
+Thống kê của một flow được ghi ra file khi flow đóng, hết thời gian chờ hoặc quá trình thu thập gói tin kết thúc:
 
-- `endpoint_a`, `endpoint_b`: hai đầu IP/port; A là phía gửi packet đầu tiên được quan sát.
-- `flow_id`: liên kết summary với các event của flow; ID được tạo mới mỗi lần tạo flow.
-- `forward`: A→B; `backward`: B→A. Hai chiều dùng cùng flow ID.
-- `packet_count`, `byte_count`: tổng số packet và byte; thống kê từng chiều nằm trong `forward`/`backward`.
+- `endpoint_a`, `endpoint_b`: địa chỉ IP và port của hai đầu kết nối. A là phía gửi gói tin đầu tiên được quan sát.
+- `flow_id`: liên kết bản tổng kết với các event thuộc flow. Mỗi flow mới có một ID mới.
+- `forward`: chiều A→B; `backward`: chiều B→A. Hai chiều dùng chung một flow ID.
+- `packet_count`, `byte_count`: tổng số gói tin và byte; thống kê từng chiều nằm trong `forward`/`backward`.
 - `start_time`, `last_seen`, `duration`: thời điểm đầu/cuối và khoảng thời gian giữa chúng.
-- `state`, `tcp_flags`, `handshake_observed`, `capture_midstream`: metadata TCP; là `null` với UDP.
-- `close_reason`: lý do xuất summary, ví dụ `tcp_fin`, `tcp_reset`, `idle_timeout`, `capture_end`.
+- `state`, `tcp_flags`, `handshake_observed`, `capture_midstream`: thông tin trạng thái TCP. Các trường này có giá trị `null` với UDP.
+- `close_reason`: lý do ghi bản tổng kết, ví dụ `tcp_fin`, `tcp_reset`, `idle_timeout`, `capture_end`.
 
-
-
-
-
-
-## Hạn chế hiện tại
-
-- Core Engine hỗ trợ subset Snort 2-style được mô tả ở trên; chưa có module Alert/Response hoặc chức năng chặn traffic.
-- Parser hiện hỗ trợ IPv4/TCP/UDP; chưa hỗ trợ IPv6 và các giao thức mạng khác.
-- HTTP cần message/body đầy đủ trong packet; chưa có HTTP stream reassembly tổng quát, chunked decoding, gzip hoặc giải mã HTTPS/TLS.
-- SMTP DATA có xử lý theo phiên và kiểm tra sequence trong phạm vi triển khai; chưa phải cơ chế TCP reassembly tổng quát.
-- Content Matcher dùng raw payload đầy đủ của từng packet; không giải mã HTTPS/TLS hoặc tự áp dụng HTTP buffer keyword. Flow direction/established cho detection chỉ được xác nhận khi có đủ bằng chứng, có thể chưa biết khi capture giữa phiên.
-- Kết quả test xác nhận những trường hợp được mô tả trong hồ sơ, chưa bao phủ mọi biến thể traffic thực tế.
-- Lỗi của một packet/event được ghi nhận để tiếp tục xử lý; lỗi đọc file PCAP khiến không thể tiếp tục đọc được báo thất bại.
 
 ## Sử dụng công cụ AI
 
-**Công cụ sử dụng: Codex**, trợ lý lập trình AI. Công cụ được dùng để giải thích yêu cầu, brainstorm/chia task, hỗ trợ viết và rà soát code, thiết kế fixture/assertion, chạy kiểm tra, phân tích lỗi, giải thích Python/Scapy/Git và soạn tài liệu/lệnh commit.
-Dữ liệu tự tạo, event giả lập và kết quả kiểm tra được ghi rõ trong README từng test để người đọc có thể đối chiếu và tái hiện.
+Project có sử dụng Codex để hỗ trợ đọc hiểu yêu cầu, lên ý tưởng và chia công việc, viết và rà soát mã nguồn, chuẩn bị dữ liệu cùng điều kiện kiểm tra, chạy test và phân tích lỗi. Codex cũng được dùng để giải thích cách sử dụng Python, Scapy, Git và hỗ trợ soạn tài liệu, lệnh commit.
 
+Các dữ liệu tự tạo, event giả lập và kết quả kiểm tra được ghi rõ trong README của từng test để người đọc có thể đối chiếu và chạy lại.
