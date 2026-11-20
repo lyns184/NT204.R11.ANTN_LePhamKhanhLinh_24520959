@@ -7,7 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from ids.alert.config import Severity
-from ids.alert.models import Alert
+from ids.alert.models import Alert, AlertAggregationResult
 
 
 _CREATE_ALERTS = """
@@ -44,6 +44,16 @@ INSERT INTO alerts (
 """
 
 
+_FIND_ALERT_GROUP = """
+SELECT * FROM alerts
+WHERE run_id = :run_id AND sid = :sid AND src_ip = :src_ip AND dst_ip = :dst_ip
+  AND protocol IS :protocol AND application_protocol IS :application_protocol
+  AND first_seen <= :first_seen
+ORDER BY first_seen DESC, alert_id
+LIMIT 1
+"""
+
+
 def _finite_timestamp(value: object, name: str) -> float:
     try:
         if type(value) in (int, float) and math.isfinite(value):
@@ -51,6 +61,18 @@ def _finite_timestamp(value: object, name: str) -> float:
     except OverflowError:
         pass
     raise ValueError(f"{name} must be a finite Unix timestamp")
+
+
+def _with_run_id(alert: Alert, run_id: str) -> Alert:
+    if not isinstance(run_id, str) or not run_id.strip():
+        raise ValueError("run_id must be a nonempty string")
+    if alert.run_id is not None and alert.run_id != run_id:
+        raise ValueError("alert.run_id must match run_id")
+    return replace(alert, run_id=run_id)
+
+
+def _from_row(row: sqlite3.Row) -> Alert:
+    return Alert(**{**dict(row), "severity": Severity(row["severity"])})
 
 
 class AlertRepository:
@@ -77,6 +99,10 @@ class AlertRepository:
                 connection.execute(_CREATE_ALERTS)
                 connection.execute("CREATE INDEX IF NOT EXISTS alerts_first_seen_idx ON alerts(first_seen)")
                 connection.execute("CREATE INDEX IF NOT EXISTS alerts_run_seen_idx ON alerts(run_id, first_seen)")
+                connection.execute(
+                    "CREATE INDEX IF NOT EXISTS alerts_group_idx ON alerts("
+                    "run_id, sid, src_ip, dst_ip, protocol, application_protocol, first_seen DESC, alert_id)"
+                )
 
     def _connect(self) -> sqlite3.Connection:
         if self._read_only:
@@ -94,14 +120,47 @@ class AlertRepository:
 
     def insert(self, alert: Alert, *, run_id: str) -> Alert:
         """Lưu một nhóm mới. Trùng alert_id sẽ báo lỗi và giữ bản ghi cũ."""
-        if not isinstance(run_id, str) or not run_id.strip():
-            raise ValueError("run_id must be a nonempty string")
-        if alert.run_id is not None and alert.run_id != run_id:
-            raise ValueError("alert.run_id must match run_id")
-        stored = replace(alert, run_id=run_id)
+        stored = _with_run_id(alert, run_id)
         with closing(self._connect()) as connection, connection:
             self._insert(connection, stored)
         return stored
+
+    def record(
+        self, alert: Alert, *, run_id: str, window_seconds: float | None
+    ) -> AlertAggregationResult:
+        """Ghi một detection đã qua filter. None là chế độ tắt aggregation.
+
+        Nhóm bắt đầu tại first_seen và nhận event trong [first_seen, first_seen + window).
+        Nhóm bắt đầu gần nhất ở trước hoặc tại timestamp được ưu tiên. Vì thế
+        nhóm tạo từ event đến muộn chỉ nhận event trước khi nhóm kế tiếp bắt đầu.
+        """
+        timestamp = _finite_timestamp(alert.first_seen, "first_seen")
+        last_seen = _finite_timestamp(alert.last_seen, "last_seen")
+        if type(alert.count) is not int or alert.count != 1 or last_seen != timestamp:
+            raise ValueError("record expects one detection with first_seen equal to last_seen")
+        if window_seconds is None:
+            return AlertAggregationResult(self.insert(alert, run_id=run_id), "created")
+        window = _finite_timestamp(window_seconds, "window_seconds")
+        if window <= 0:
+            raise ValueError("window_seconds must be positive")
+        incoming = _with_run_id(alert, run_id)
+
+        with closing(self._connect()) as connection, connection:
+            # Khóa ghi trước SELECT để các callback không đọc cùng count cũ.
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(_FIND_ALERT_GROUP, incoming.to_dict()).fetchone()
+            if row is not None and (
+                timestamp == row["first_seen"] or timestamp < row["first_seen"] + window
+            ):
+                group = _from_row(row)
+                updated = replace(group, last_seen=max(group.last_seen, timestamp), count=group.count + 1)
+                connection.execute(
+                    "UPDATE alerts SET last_seen = ?, count = ? WHERE alert_id = ?",
+                    (updated.last_seen, updated.count, updated.alert_id),
+                )
+                return AlertAggregationResult(updated, "aggregated")
+            self._insert(connection, incoming)
+            return AlertAggregationResult(incoming, "created")
 
     def query(
         self,
@@ -141,4 +200,4 @@ class AlertRepository:
                 "SELECT * FROM alerts" + where + " ORDER BY first_seen, alert_id",
                 parameters,
             )
-            return [Alert(**{**dict(row), "severity": Severity(row["severity"])}) for row in rows]
+            return [_from_row(row) for row in rows]

@@ -44,3 +44,9 @@ class AlertConversionResult:
     @property
     def status(self) -> Literal["accepted", "rejected"]:
         return "accepted" if self.alert is not None else "rejected"
+
+
+@dataclass(frozen=True)
+class AlertAggregationResult:
+    alert: Alert
+    status: Literal["created", "aggregated"]
