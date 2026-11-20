@@ -1,0 +1,16 @@
+{
+  "severity_mapping": {
+    "1": "CRITICAL",
+    "2": "HIGH",
+    "3": "MEDIUM",
+    "4": "LOW"
+  },
+  "default_severity": "LOW",
+  "min_severity": "LOW",
+  "suppressed_sids": [],
+  "aggregation_enabled": true,
+  "aggregation_window_seconds": 60,
+  "storage_type": "sqlite",
+  "storage_path": "output/alerts.sqlite3",
+  "top_n": 10
+}
