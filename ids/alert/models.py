@@ -25,6 +25,7 @@ class Alert:
     classtype: str | None = None
     priority: int | None = None
     rev: int | None = None
+    run_id: str | None = None
 
     @property
     def timestamp(self) -> float:
