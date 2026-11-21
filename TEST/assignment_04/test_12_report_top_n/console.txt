@@ -1,0 +1,10 @@
+TC12: seven simulated alert groups; one group alone has count=25.
+PASS top_2/top_sids: [(104121, 3), (104122, 2)]
+PASS top_2/top_classtypes: [('lab-http', 3), ('UNKNOWN', 2)]
+PASS top_2/top_src_ips: [('192.0.2.1', 3), ('192.0.2.2', 2)]
+PASS top_2/top_dst_ips: [('198.51.100.2', 3), ('198.51.100.1', 2)]
+PASS top_10/top_sids: [(104121, 3), (104122, 2), (104123, 2)]
+PASS top_10/top_classtypes: [('lab-http', 3), ('UNKNOWN', 2), ('lab-dns', 2)]
+PASS top_10/top_src_ips: [('192.0.2.1', 3), ('192.0.2.2', 2), ('192.0.2.3', 2)]
+PASS top_10/top_dst_ips: [('198.51.100.2', 3), ('198.51.100.1', 2), ('198.51.100.3', 2)]
+PASS TC12: all four rankings count groups and handle ties and Top-N limits correctly.

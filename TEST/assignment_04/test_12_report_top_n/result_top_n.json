@@ -1,0 +1,170 @@
+{
+  "top_2": {
+    "period": {
+      "from_utc": "2023-11-14T22:13:20Z",
+      "to_utc": "2023-11-14T22:14:20Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 2,
+    "total_alerts": 7,
+    "total_occurrences": 31,
+    "severity_counts": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 7,
+      "CRITICAL": 0
+    },
+    "sid_counts": {
+      "104121": 3,
+      "104122": 2,
+      "104123": 2
+    },
+    "classtype_counts": {
+      "UNKNOWN": 2,
+      "lab-dns": 2,
+      "lab-http": 3
+    },
+    "top_sids": [
+      {
+        "value": 104121,
+        "alerts": 3
+      },
+      {
+        "value": 104122,
+        "alerts": 2
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "lab-http",
+        "alerts": 3
+      },
+      {
+        "value": "UNKNOWN",
+        "alerts": 2
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.1",
+        "alerts": 3
+      },
+      {
+        "value": "192.0.2.2",
+        "alerts": 2
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.2",
+        "alerts": 3
+      },
+      {
+        "value": "198.51.100.1",
+        "alerts": 2
+      }
+    ],
+    "protocol_counts": {
+      "UNKNOWN": 7
+    },
+    "application_protocol_counts": {
+      "UNKNOWN": 7
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T22:00:00Z": 7
+    }
+  },
+  "top_10": {
+    "period": {
+      "from_utc": "2023-11-14T22:13:20Z",
+      "to_utc": "2023-11-14T22:14:20Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 10,
+    "total_alerts": 7,
+    "total_occurrences": 31,
+    "severity_counts": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 7,
+      "CRITICAL": 0
+    },
+    "sid_counts": {
+      "104121": 3,
+      "104122": 2,
+      "104123": 2
+    },
+    "classtype_counts": {
+      "UNKNOWN": 2,
+      "lab-dns": 2,
+      "lab-http": 3
+    },
+    "top_sids": [
+      {
+        "value": 104121,
+        "alerts": 3
+      },
+      {
+        "value": 104122,
+        "alerts": 2
+      },
+      {
+        "value": 104123,
+        "alerts": 2
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "lab-http",
+        "alerts": 3
+      },
+      {
+        "value": "UNKNOWN",
+        "alerts": 2
+      },
+      {
+        "value": "lab-dns",
+        "alerts": 2
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.1",
+        "alerts": 3
+      },
+      {
+        "value": "192.0.2.2",
+        "alerts": 2
+      },
+      {
+        "value": "192.0.2.3",
+        "alerts": 2
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.2",
+        "alerts": 3
+      },
+      {
+        "value": "198.51.100.1",
+        "alerts": 2
+      },
+      {
+        "value": "198.51.100.3",
+        "alerts": 2
+      }
+    ],
+    "protocol_counts": {
+      "UNKNOWN": 7
+    },
+    "application_protocol_counts": {
+      "UNKNOWN": 7
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T22:00:00Z": 7
+    }
+  }
+}
