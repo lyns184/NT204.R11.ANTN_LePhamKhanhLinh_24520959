@@ -1,0 +1,11 @@
+TC03: simulated Detection Events, real AlertManager and temporary SQLite.
+PASS missing_timestamp: rejected, timestamp must be a finite number
+PASS missing_sid: rejected, sid must be an integer in 1..2147483647
+PASS missing_msg: rejected, msg must be a nonempty string
+PASS missing_src_ip: rejected, src_ip must be an IPv4 address
+PASS missing_dst_ip: rejected, dst_ip must be an IPv4 address
+PASS invalid_timestamp: rejected, timestamp must be a finite number
+PASS invalid_sid: rejected, sid must be an integer in 1..2147483647
+PASS invalid_src_ip: rejected, src_ip must be an IPv4 address
+PASS invalid_dst_port: rejected, dst_port must be an integer in 0..65535
+PASS TC03: nine rejections diagnosed, valid processing continued, one stored group with count=2.
