@@ -9,6 +9,7 @@ Thư mục này lưu dữ liệu và kết quả kiểm thử của từng bài 
 | [assignment_01](assignment_01/README.md) | Packet Capture & Parser | Live capture và 12 nhóm test offline |
 | [assignment_02](assignment_02/README.md) | Decoder, Preprocessor, Flow/Connection Tracker | T01–T14 |
 | [assignment_03](assignment_03/README.md) | Core Engine & Snort Rule Matching | T01–T14 |
+| [assignment_04](assignment_04/README.md) | Alert Manager, SQLite Repository & Report Generator | TC01–TC14 |
 
 Mỗi test case được lưu trong một thư mục riêng, bao gồm:
 
@@ -17,7 +18,7 @@ Mỗi test case được lưu trong một thư mục riêng, bao gồm:
 - Kết quả chạy trên terminal.
 - README mô tả nguồn dữ liệu, mục tiêu và kết quả kiểm thử.
 
-README từng test dùng các mục **Mục tiêu, Dữ liệu, Thực hiện, Kết quả, Tệp**. PCAP Scapy tự tạo, event/context mô phỏng trực tiếp và live capture được phân biệt rõ trong phần Dữ liệu.
+README từng test dùng các mục **Mục tiêu, Dữ liệu, Thực hiện, Kết quả, Tệp**. Phần Dữ liệu ghi rõ nguồn đầu vào, chẳng hạn PCAP tự tạo bằng Scapy, event/context mô phỏng, dữ liệu SQLite hoặc live capture.
 
 ## Cách tái hiện
 
