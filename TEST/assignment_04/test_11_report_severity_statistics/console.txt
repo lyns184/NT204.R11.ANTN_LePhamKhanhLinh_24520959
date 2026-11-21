@@ -1,0 +1,5 @@
+TC11: seven simulated alert groups in SQLite, independently calculated report expectations.
+PASS all_runs: 5 groups, 11 occurrences, severity={'LOW': 1, 'MEDIUM': 1, 'HIGH': 2, 'CRITICAL': 1}
+PASS run_a: 3 groups, 7 occurrences, severity={'LOW': 1, 'MEDIUM': 0, 'HIGH': 1, 'CRITICAL': 1}
+PASS empty_period: 0 groups, 0 occurrences, severity={'LOW': 0, 'MEDIUM': 0, 'HIGH': 0, 'CRITICAL': 0}
+PASS TC11: totals and severity distribution agree with the fixture for all three reports.

@@ -1,0 +1,162 @@
+{
+  "all_runs": {
+    "period": {
+      "from_utc": "2023-11-14T22:13:20Z",
+      "to_utc": "2023-11-14T22:14:20Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 3,
+    "total_alerts": 5,
+    "total_occurrences": 11,
+    "severity_counts": {
+      "LOW": 1,
+      "MEDIUM": 1,
+      "HIGH": 2,
+      "CRITICAL": 1
+    },
+    "sid_counts": {
+      "104112": 1,
+      "104113": 1,
+      "104114": 1,
+      "104115": 1,
+      "104116": 1
+    },
+    "classtype_counts": {
+      "UNKNOWN": 5
+    },
+    "top_sids": [
+      {
+        "value": 104112,
+        "alerts": 1
+      },
+      {
+        "value": 104113,
+        "alerts": 1
+      },
+      {
+        "value": 104114,
+        "alerts": 1
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "UNKNOWN",
+        "alerts": 5
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.10",
+        "alerts": 5
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.20",
+        "alerts": 5
+      }
+    ],
+    "protocol_counts": {
+      "UNKNOWN": 5
+    },
+    "application_protocol_counts": {
+      "UNKNOWN": 5
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T22:00:00Z": 5
+    }
+  },
+  "run_a": {
+    "period": {
+      "from_utc": "2023-11-14T22:13:20Z",
+      "to_utc": "2023-11-14T22:14:20Z"
+    },
+    "run_id": "fixture-tc11-a",
+    "time_basis": "first_seen",
+    "top_n": 3,
+    "total_alerts": 3,
+    "total_occurrences": 7,
+    "severity_counts": {
+      "LOW": 1,
+      "MEDIUM": 0,
+      "HIGH": 1,
+      "CRITICAL": 1
+    },
+    "sid_counts": {
+      "104112": 1,
+      "104113": 1,
+      "104116": 1
+    },
+    "classtype_counts": {
+      "UNKNOWN": 3
+    },
+    "top_sids": [
+      {
+        "value": 104112,
+        "alerts": 1
+      },
+      {
+        "value": 104113,
+        "alerts": 1
+      },
+      {
+        "value": 104116,
+        "alerts": 1
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "UNKNOWN",
+        "alerts": 3
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.10",
+        "alerts": 3
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.20",
+        "alerts": 3
+      }
+    ],
+    "protocol_counts": {
+      "UNKNOWN": 3
+    },
+    "application_protocol_counts": {
+      "UNKNOWN": 3
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T22:00:00Z": 3
+    }
+  },
+  "empty_period": {
+    "period": {
+      "from_utc": "2023-11-14T22:15:20Z",
+      "to_utc": "2023-11-14T22:16:20Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 3,
+    "total_alerts": 0,
+    "total_occurrences": 0,
+    "severity_counts": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "CRITICAL": 0
+    },
+    "sid_counts": {},
+    "classtype_counts": {},
+    "top_sids": [],
+    "top_classtypes": [],
+    "top_src_ips": [],
+    "top_dst_ips": [],
+    "protocol_counts": {},
+    "application_protocol_counts": {},
+    "alerts_by_hour_utc": {}
+  }
+}
