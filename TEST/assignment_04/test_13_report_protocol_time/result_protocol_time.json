@@ -1,0 +1,216 @@
+{
+  "whole_period": {
+    "period": {
+      "from_utc": "2023-11-14T22:00:00Z",
+      "to_utc": "2023-11-15T02:00:00Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 3,
+    "total_alerts": 7,
+    "total_occurrences": 14,
+    "severity_counts": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 7,
+      "CRITICAL": 0
+    },
+    "sid_counts": {
+      "104132": 1,
+      "104133": 1,
+      "104134": 1,
+      "104135": 1,
+      "104136": 1,
+      "104137": 1,
+      "104138": 1
+    },
+    "classtype_counts": {
+      "UNKNOWN": 7
+    },
+    "top_sids": [
+      {
+        "value": 104132,
+        "alerts": 1
+      },
+      {
+        "value": 104133,
+        "alerts": 1
+      },
+      {
+        "value": 104134,
+        "alerts": 1
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "UNKNOWN",
+        "alerts": 7
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.10",
+        "alerts": 7
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.20",
+        "alerts": 7
+      }
+    ],
+    "protocol_counts": {
+      "TCP": 3,
+      "UDP": 3,
+      "UNKNOWN": 1
+    },
+    "application_protocol_counts": {
+      "DNS": 2,
+      "HTTP": 1,
+      "SMTP": 1,
+      "UNKNOWN": 3
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T22:00:00Z": 3,
+      "2023-11-14T23:00:00Z": 3,
+      "2023-11-15T01:00:00Z": 1
+    }
+  },
+  "first_hour": {
+    "period": {
+      "from_utc": "2023-11-14T22:00:00Z",
+      "to_utc": "2023-11-14T23:00:00Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 3,
+    "total_alerts": 3,
+    "total_occurrences": 8,
+    "severity_counts": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 3,
+      "CRITICAL": 0
+    },
+    "sid_counts": {
+      "104132": 1,
+      "104133": 1,
+      "104134": 1
+    },
+    "classtype_counts": {
+      "UNKNOWN": 3
+    },
+    "top_sids": [
+      {
+        "value": 104132,
+        "alerts": 1
+      },
+      {
+        "value": 104133,
+        "alerts": 1
+      },
+      {
+        "value": 104134,
+        "alerts": 1
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "UNKNOWN",
+        "alerts": 3
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.10",
+        "alerts": 3
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.20",
+        "alerts": 3
+      }
+    ],
+    "protocol_counts": {
+      "TCP": 2,
+      "UNKNOWN": 1
+    },
+    "application_protocol_counts": {
+      "HTTP": 1,
+      "SMTP": 1,
+      "UNKNOWN": 1
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T22:00:00Z": 3
+    }
+  },
+  "second_hour": {
+    "period": {
+      "from_utc": "2023-11-14T23:00:00Z",
+      "to_utc": "2023-11-15T00:00:00Z"
+    },
+    "run_id": null,
+    "time_basis": "first_seen",
+    "top_n": 3,
+    "total_alerts": 3,
+    "total_occurrences": 5,
+    "severity_counts": {
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 3,
+      "CRITICAL": 0
+    },
+    "sid_counts": {
+      "104135": 1,
+      "104136": 1,
+      "104137": 1
+    },
+    "classtype_counts": {
+      "UNKNOWN": 3
+    },
+    "top_sids": [
+      {
+        "value": 104135,
+        "alerts": 1
+      },
+      {
+        "value": 104136,
+        "alerts": 1
+      },
+      {
+        "value": 104137,
+        "alerts": 1
+      }
+    ],
+    "top_classtypes": [
+      {
+        "value": "UNKNOWN",
+        "alerts": 3
+      }
+    ],
+    "top_src_ips": [
+      {
+        "value": "192.0.2.10",
+        "alerts": 3
+      }
+    ],
+    "top_dst_ips": [
+      {
+        "value": "198.51.100.20",
+        "alerts": 3
+      }
+    ],
+    "protocol_counts": {
+      "TCP": 1,
+      "UDP": 2
+    },
+    "application_protocol_counts": {
+      "DNS": 2,
+      "UNKNOWN": 1
+    },
+    "alerts_by_hour_utc": {
+      "2023-11-14T23:00:00Z": 3
+    }
+  }
+}

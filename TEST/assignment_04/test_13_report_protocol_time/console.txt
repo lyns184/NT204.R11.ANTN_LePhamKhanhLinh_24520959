@@ -1,0 +1,6 @@
+TC13: nine simulated alert groups, first_seen-based UTC reporting.
+PASS transport: {'TCP': 3, 'UDP': 3, 'UNKNOWN': 1}
+PASS application: {'DNS': 2, 'HTTP': 1, 'SMTP': 1, 'UNKNOWN': 3}
+PASS UTC buckets: {'2023-11-14T22:00:00Z': 3, '2023-11-14T23:00:00Z': 3, '2023-11-15T01:00:00Z': 1}
+PASS adjacent hours: 3 groups/8 occurrences at 22:00, 3 groups/5 occurrences at 23:00.
+PASS TC13: protocol counts, UTC hour boundaries and cross-hour grouping match expectations.
