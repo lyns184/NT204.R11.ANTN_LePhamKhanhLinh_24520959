@@ -1,0 +1,10 @@
+TC10: nine simulated alert groups in SQLite, queried by first_seen and metadata.
+PASS all_rows: 9 alerts (before_range, at_start, inside, other_severity, other_sid, other_source, other_destination, other_run, at_end)
+PASS period_only: 7 alerts (at_start, inside, other_severity, other_sid, other_source, other_destination, other_run)
+PASS combined: 2 alerts (at_start, inside)
+PASS combined_all_runs: 3 alerts (at_start, inside, other_run)
+PASS adjacent_period: 1 alerts (at_end)
+PASS empty: 0 alerts (empty)
+PASS equal_bounds: from_time must be earlier than to_time
+PASS reversed_bounds: from_time must be earlier than to_time
+PASS TC10: all query criteria, period boundaries, empty result and invalid ranges.
