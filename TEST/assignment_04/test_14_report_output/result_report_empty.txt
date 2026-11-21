@@ -1,0 +1,40 @@
+IDS SECURITY REPORT
+Period (UTC): [2023-11-16T00:00:00Z, 2023-11-16T01:00:00Z)
+Run: all
+Time basis: first_seen
+Total alerts (groups): 0
+Total occurrences (sum of group counts): 0
+Distributions and rankings count alert groups.
+
+Severity
+  "LOW": 0
+  "MEDIUM": 0
+  "HIGH": 0
+  "CRITICAL": 0
+
+Rule SID
+  (none)
+
+Classtype
+  (none)
+
+Transport protocol
+  (none)
+
+Application protocol
+  (none)
+
+Alerts per hour (UTC)
+  (none)
+
+Top 2 SID
+  (none)
+
+Top 2 classtype
+  (none)
+
+Top 2 source IP
+  (none)
+
+Top 2 destination IP
+  (none)

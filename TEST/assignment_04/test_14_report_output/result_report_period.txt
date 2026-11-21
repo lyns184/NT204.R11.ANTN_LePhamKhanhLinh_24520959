@@ -1,0 +1,48 @@
+IDS SECURITY REPORT
+Period (UTC): [2023-11-14T22:13:20Z, 2023-11-15T00:13:20Z)
+Run: all
+Time basis: first_seen
+Total alerts (groups): 2
+Total occurrences (sum of group counts): 4
+Distributions and rankings count alert groups.
+
+Severity
+  "LOW": 1
+  "MEDIUM": 0
+  "HIGH": 1
+  "CRITICAL": 0
+
+Rule SID
+  "104141": 1
+  "104142": 1
+
+Classtype
+  "UNKNOWN": 1
+  "lab-http": 1
+
+Transport protocol
+  "TCP": 1
+  "UDP": 1
+
+Application protocol
+  "DNS": 1
+  "HTTP": 1
+
+Alerts per hour (UTC)
+  "2023-11-14T22:00:00Z": 1
+  "2023-11-14T23:00:00Z": 1
+
+Top 2 SID
+  104141: 1
+  104142: 1
+
+Top 2 classtype
+  "UNKNOWN": 1
+  "lab-http": 1
+
+Top 2 source IP
+  "192.0.2.1": 1
+  "192.0.2.2": 1
+
+Top 2 destination IP
+  "198.51.100.20": 2

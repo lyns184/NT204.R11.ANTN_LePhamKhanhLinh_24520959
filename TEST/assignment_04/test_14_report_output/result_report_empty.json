@@ -1,0 +1,26 @@
+{
+  "period": {
+    "from_utc": "2023-11-16T00:00:00Z",
+    "to_utc": "2023-11-16T01:00:00Z"
+  },
+  "run_id": null,
+  "time_basis": "first_seen",
+  "top_n": 2,
+  "total_alerts": 0,
+  "total_occurrences": 0,
+  "severity_counts": {
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "sid_counts": {},
+  "classtype_counts": {},
+  "top_sids": [],
+  "top_classtypes": [],
+  "top_src_ips": [],
+  "top_dst_ips": [],
+  "protocol_counts": {},
+  "application_protocol_counts": {},
+  "alerts_by_hour_utc": {}
+}

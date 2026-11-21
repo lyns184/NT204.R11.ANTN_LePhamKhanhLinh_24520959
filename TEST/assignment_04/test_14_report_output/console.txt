@@ -1,0 +1,8 @@
+TC14: independent CLI report processes against temporary SQLite fixture.
+$ "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\.venv\Scripts\python.exe" -X utf8 main.py report --alert-config "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\TEST\assignment_04\test_14_report_output\tc14_n21yxh0i\alert_config.json" --from 2023-11-15T05:13:20+07:00 --to 2023-11-15T00:13:20Z --json-output "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\TEST\assignment_04\test_14_report_output\tc14_n21yxh0i\result_report_period.json" --text-output "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\TEST\assignment_04\test_14_report_output\tc14_n21yxh0i\result_report_period.txt"
+period: CLI exit=0
+PASS period: 2 groups, 4 occurrences, all text sections match JSON.
+$ "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\.venv\Scripts\python.exe" -X utf8 main.py report --alert-config "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\TEST\assignment_04\test_14_report_output\tc14_n21yxh0i\alert_config.json" --from 2023-11-16T00:00:00Z --to 2023-11-16T01:00:00Z --json-output "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\TEST\assignment_04\test_14_report_output\tc14_n21yxh0i\result_report_empty.json" --text-output "D:\Documents\hk1-2026\hệ thống\idps\NT204.R11.ANTN_LePhamKhanhLinh_24520959\TEST\assignment_04\test_14_report_output\tc14_n21yxh0i\result_report_empty.txt"
+empty: CLI exit=0
+PASS empty: 0 groups, 0 occurrences, all text sections match JSON.
+PASS TC14: two CLI runs exported consistent text and JSON; SQLite remained unchanged.
