@@ -1,5 +1,6 @@
 import argparse
 import json
+import sqlite3
 import sys
 import time
 from contextlib import ExitStack
@@ -8,6 +9,9 @@ from threading import RLock
 
 from scapy.packet import Packet
 
+from ids.alert.config import load_alert_config
+from ids.alert.manager import AlertManager
+from ids.alert.repository import AlertRepository, sqlite_storage_paths
 from ids.capture.live_capture import capture_live
 from ids.capture.pcap_reader import read_pcap
 from ids.core.pipeline import process_packet
@@ -58,6 +62,8 @@ def create_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--rules", action="append", help="File Snort 2-style rules; có thể truyền nhiều lần")
     parser.add_argument("--rule-config", help="JSON cấu hình disabled_files/disabled_sids")
     parser.add_argument("--detection-output", help="Detection JSONL; mặc định detections.jsonl cạnh event output")
+    parser.add_argument("--alert-config", help="Bật Alert Manager bằng file cấu hình JSON; cần --rules")
+    parser.add_argument("--alert-output", help="File tóm tắt alert; mặc định in ra console khi bật Alert Manager")
     return parser
 
 
@@ -159,6 +165,10 @@ def main() -> int:
         parser.error("--count không được là số âm")
     if not args.rules and (args.rule_config is not None or args.detection_output is not None):
         parser.error("--rule-config và --detection-output cần --rules")
+    if args.alert_config is not None and not args.rules:
+        parser.error("--alert-config cần --rules")
+    if args.alert_output is not None and args.alert_config is None:
+        parser.error("--alert-output cần --alert-config")
     try:
         flow_config = FlowTrackerConfig(args.tcp_idle_timeout, args.udp_idle_timeout,
                                         args.flow_check_interval, args.max_active_flows)
@@ -169,27 +179,39 @@ def main() -> int:
 
     engine = None
     detection_path = None
+    alert_config = None
     try:
         event_path = Path(args.output)
         flow_path = Path(args.flow_output) if args.flow_output is not None else event_path.with_name(event_path.stem + "_flows.jsonl")
         outputs = {"event": args.output, "flow": args.flow_output if args.flow_output is not None else flow_path}
         inputs = [args.pcap] if args.pcap is not None else []
         if args.rules:
-            config = load_rule_config(args.rule_config)
+            rule_config = load_rule_config(args.rule_config)
             detection_path = Path(args.detection_output) if args.detection_output is not None else event_path.with_name("detections.jsonl")
             outputs["detection"] = args.detection_output if args.detection_output is not None else detection_path
             inputs.extend(args.rules)
-            inputs.extend(config.disabled_files)
+            inputs.extend(rule_config.disabled_files)
             if args.rule_config is not None:
                 inputs.append(args.rule_config)
-            validate_output_paths(outputs, inputs)
-            report = load_rules(args.rules, config)
+
+        if args.alert_config is not None:
+            alert_config = load_alert_config(args.alert_config)
+            inputs.append(args.alert_config)
+            for label, path in zip(
+                ("alert DB", "alert DB journal", "alert DB WAL", "alert DB SHM"),
+                sqlite_storage_paths(alert_config.storage_path),
+            ):
+                outputs[label] = path
+            if args.alert_output is not None:
+                outputs["alert export"] = args.alert_output
+        validate_output_paths(outputs, inputs)
+
+        if args.rules:
+            report = load_rules(args.rules, rule_config)
             for diagnostic in report.diagnostics:
                 report_diagnostic(diagnostic)
             engine = EvaluationEngine(RuleRepository(report.enabled_rules))
             print("[RULES] " + json.dumps(report.counts, ensure_ascii=True))
-        else:
-            validate_output_paths(outputs, inputs)
     except RuleLoadError as error:
         for diagnostic in error.report.diagnostics:
             report_diagnostic(diagnostic)
@@ -206,13 +228,37 @@ def main() -> int:
     flow_tracker = FlowTracker(flow_config)
 
     detection_session = None
+    alert_manager = None
+
+    def process_alert(record) -> None:
+        if alert_manager is None:
+            return
+        try:
+            result = alert_manager.process(record)
+        except sqlite3.Error as error:
+            raise RuntimeError(f"Không thể ghi alert vào SQLite: {error}") from error
+        if result.status == "rejected":
+            print("[ALERT DIAGNOSTIC] " + json.dumps({
+                "status": result.status, "reason": result.reason,
+                "packet_id": record.get("packet_id"), "sid": record.get("sid"),
+            }, ensure_ascii=True), file=sys.stderr)
+
     try:
+        if alert_config is not None:
+            try:
+                repository = AlertRepository(alert_config.storage_path)
+            except (OSError, sqlite3.Error) as error:
+                raise RuntimeError(f"Không thể mở SQLite tại {alert_config.storage_path}: {error}") from error
+            alert_manager = AlertManager(alert_config, repository)
         with ExitStack() as stack:
             writer = stack.enter_context(JSONLWriter(args.output))
             flow_writer = stack.enter_context(JSONLWriter(str(flow_path)))
             if engine is not None:
                 detection_writer = stack.enter_context(JSONLWriter(str(detection_path)))
-                detection_session = DetectionSession(engine, detection_writer.write_record, report_diagnostic)
+                detection_session = DetectionSession(
+                    engine, detection_writer.write_record, report_diagnostic,
+                    after_record=process_alert if alert_manager is not None else None,
+                )
             finish_reason = "capture_end"
             try:
                 if args.pcap is not None:
@@ -244,6 +290,8 @@ def main() -> int:
                 for summary in flow_tracker.flush(reason=finish_reason):
                     flow_writer.write_record(summary)
 
+        if alert_manager is not None:
+            alert_manager.export_alerts(args.alert_output if args.alert_output is not None else sys.stdout)
     except Exception as error:
         print(f"[ERROR] {error}")
         return 1
@@ -255,6 +303,10 @@ def main() -> int:
             print("[DETECTION SUMMARY] " + json.dumps({**engine.metrics.to_dict(),
                 "detections_written": detection_session.detections_written if detection_session is not None else 0},
                 ensure_ascii=True, allow_nan=False))
+        if alert_manager is not None:
+            print("[ALERT SUMMARY] " + json.dumps({
+                "run_id": alert_manager.run_id, **alert_manager.counts,
+            }, ensure_ascii=True, allow_nan=False))
 
     print(f"Đã xử lý {packet_count} packet.")
     print(f"Đã ghi kết quả vào: {args.output}")

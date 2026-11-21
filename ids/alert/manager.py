@@ -13,7 +13,7 @@ from ids.alert.config import AlertConfig
 from ids.alert.conversion import convert_detection
 from ids.alert.filtering import AlertFilter
 from ids.alert.models import Alert
-from ids.alert.repository import AlertRepository
+from ids.alert.repository import AlertRepository, sqlite_storage_paths
 from ids.detection.models import DetectionEvent
 from ids.output.paths import validate_output_paths
 
@@ -83,10 +83,7 @@ class AlertManager:
         """Xuất trạng thái cuối của các nhóm đã lưu trong run hiện tại."""
         alerts = self._repository.query(run_id=self.run_id)
         if isinstance(destination, (str, Path)):
-            storage = self._repository.path
-            storage_files = [storage, *(storage.with_name(storage.name + suffix)
-                                        for suffix in ("-journal", "-wal", "-shm"))]
-            validate_output_paths({"alert export": destination}, storage_files)
+            validate_output_paths({"alert export": destination}, sqlite_storage_paths(self._repository.path))
             path = Path(destination)
             path.parent.mkdir(parents=True, exist_ok=True)
             with path.open("w", encoding="utf-8") as stream:

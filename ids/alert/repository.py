@@ -75,6 +75,11 @@ def _from_row(row: sqlite3.Row) -> Alert:
     return Alert(**{**dict(row), "severity": Severity(row["severity"])})
 
 
+def sqlite_storage_paths(path: Path) -> tuple[Path, ...]:
+    """File DB và các file SQLite có thể tạo cạnh nó."""
+    return (path, *(path.with_name(path.name + suffix) for suffix in ("-journal", "-wal", "-shm")))
+
+
 class AlertRepository:
     """Mỗi thao tác mở và đóng kết nối trên thread gọi.
 
