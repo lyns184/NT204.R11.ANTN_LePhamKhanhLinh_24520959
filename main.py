@@ -23,10 +23,12 @@ from ids.detection import (
     RuleRepository, load_rule_config, load_rules,
 )
 from ids.output.paths import validate_output_paths
+from ids.report.cli import run_report_cli
 
 def create_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Packet Capture, Parser và Core Engine cho hệ thống IDS"
+        description="Packet Capture, Parser và Core Engine cho hệ thống IDS",
+        epilog="Để báo cáo từ SQLite, chạy: python main.py report --help",
     )
 
     source_group = parser.add_mutually_exclusive_group(required=True)
@@ -158,6 +160,8 @@ def run_live_mode(
 
 
 def main() -> int:
+    if sys.argv[1:2] == ["report"]:
+        return run_report_cli(sys.argv[2:])
     parser = create_argument_parser()
     args = parser.parse_args()
 
