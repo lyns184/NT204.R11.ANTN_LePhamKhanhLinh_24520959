@@ -1,0 +1,6 @@
+TC09: fixed alert fixtures, real SQLite with independent write/read connections.
+PASS insert: sid=104092, run_id=fixture-tc09-b, count=1
+PASS insert: sid=104091, run_id=fixture-tc09-a, count=4
+PASS reopen: sid=104091, all 19 fields match
+PASS reopen: sid=104092, all 19 fields match
+PASS TC09: two alerts reopened, complete and nullable metadata preserved, DB unchanged on read.
