@@ -1,0 +1,222 @@
+{
+  "cases": [
+    {
+      "case": "baseline",
+      "offset_seconds": 0,
+      "status": "created",
+      "alert_id": "b4c5778b-ecb7-4dd0-9fbb-bbced7c0e4e8",
+      "expected_key": {
+        "sid": 104061,
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "protocol": "UDP",
+        "application_protocol": "DNS"
+      }
+    },
+    {
+      "case": "other_sid",
+      "offset_seconds": 1,
+      "status": "created",
+      "alert_id": "e0b2e93f-8669-49f2-bb37-57c59f175244",
+      "expected_key": {
+        "sid": 104062,
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "protocol": "UDP",
+        "application_protocol": "DNS"
+      }
+    },
+    {
+      "case": "other_source",
+      "offset_seconds": 2,
+      "status": "created",
+      "alert_id": "4913ab3a-6740-482c-97b4-52b2334d34d9",
+      "expected_key": {
+        "sid": 104061,
+        "src_ip": "192.0.2.11",
+        "dst_ip": "198.51.100.20",
+        "protocol": "UDP",
+        "application_protocol": "DNS"
+      }
+    },
+    {
+      "case": "other_dest",
+      "offset_seconds": 3,
+      "status": "created",
+      "alert_id": "edcea33f-b206-4b39-b775-a7311c9254c5",
+      "expected_key": {
+        "sid": 104061,
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.21",
+        "protocol": "UDP",
+        "application_protocol": "DNS"
+      }
+    },
+    {
+      "case": "other_proto",
+      "offset_seconds": 4,
+      "status": "created",
+      "alert_id": "f4ac90ce-9801-4f64-8d33-eb2b7a1faca0",
+      "expected_key": {
+        "sid": 104061,
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "protocol": "TCP",
+        "application_protocol": "DNS"
+      }
+    },
+    {
+      "case": "unknown_app",
+      "offset_seconds": 5,
+      "status": "created",
+      "alert_id": "76c8e7b5-8d53-450a-b9b4-b2e853a27aac",
+      "expected_key": {
+        "sid": 104061,
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "protocol": "UDP",
+        "application_protocol": null
+      }
+    }
+  ],
+  "counts": {
+    "received": 6,
+    "rejected": 0,
+    "filtered": 0,
+    "created": 6,
+    "aggregated": 0,
+    "storage_errors": 0,
+    "filtered_by_reason": {
+      "sid_suppressed": 0,
+      "below_min_severity": 0
+    }
+  },
+  "stored_alerts": [
+    {
+      "alert_id": "b4c5778b-ecb7-4dd0-9fbb-bbced7c0e4e8",
+      "sid": 104061,
+      "msg": "Kiểm thử nhóm độc lập",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000000.0,
+      "last_seen": 1700000000.0,
+      "count": 1,
+      "src_port": 53000,
+      "dst_port": 53,
+      "protocol": "UDP",
+      "application_protocol": "DNS",
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "e361597f-70d9-459d-a591-b8eddffd393c",
+      "timestamp": 1700000000.0
+    },
+    {
+      "alert_id": "e0b2e93f-8669-49f2-bb37-57c59f175244",
+      "sid": 104062,
+      "msg": "Kiểm thử nhóm độc lập",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000001.0,
+      "last_seen": 1700000001.0,
+      "count": 1,
+      "src_port": 53000,
+      "dst_port": 53,
+      "protocol": "UDP",
+      "application_protocol": "DNS",
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "e361597f-70d9-459d-a591-b8eddffd393c",
+      "timestamp": 1700000001.0
+    },
+    {
+      "alert_id": "4913ab3a-6740-482c-97b4-52b2334d34d9",
+      "sid": 104061,
+      "msg": "Kiểm thử nhóm độc lập",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.11",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000002.0,
+      "last_seen": 1700000002.0,
+      "count": 1,
+      "src_port": 53000,
+      "dst_port": 53,
+      "protocol": "UDP",
+      "application_protocol": "DNS",
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "e361597f-70d9-459d-a591-b8eddffd393c",
+      "timestamp": 1700000002.0
+    },
+    {
+      "alert_id": "edcea33f-b206-4b39-b775-a7311c9254c5",
+      "sid": 104061,
+      "msg": "Kiểm thử nhóm độc lập",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.21",
+      "first_seen": 1700000003.0,
+      "last_seen": 1700000003.0,
+      "count": 1,
+      "src_port": 53000,
+      "dst_port": 53,
+      "protocol": "UDP",
+      "application_protocol": "DNS",
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "e361597f-70d9-459d-a591-b8eddffd393c",
+      "timestamp": 1700000003.0
+    },
+    {
+      "alert_id": "f4ac90ce-9801-4f64-8d33-eb2b7a1faca0",
+      "sid": 104061,
+      "msg": "Kiểm thử nhóm độc lập",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000004.0,
+      "last_seen": 1700000004.0,
+      "count": 1,
+      "src_port": 53000,
+      "dst_port": 53,
+      "protocol": "TCP",
+      "application_protocol": "DNS",
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "e361597f-70d9-459d-a591-b8eddffd393c",
+      "timestamp": 1700000004.0
+    },
+    {
+      "alert_id": "76c8e7b5-8d53-450a-b9b4-b2e853a27aac",
+      "sid": 104061,
+      "msg": "Kiểm thử nhóm độc lập",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000005.0,
+      "last_seen": 1700000005.0,
+      "count": 1,
+      "src_port": 53000,
+      "dst_port": 53,
+      "protocol": "UDP",
+      "application_protocol": null,
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "e361597f-70d9-459d-a591-b8eddffd393c",
+      "timestamp": 1700000005.0
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+TC06: distinct aggregation keys, real AlertManager and temporary SQLite.
+PASS baseline: created, count=1, alert_id=b4c5778b-ecb7-4dd0-9fbb-bbced7c0e4e8
+PASS other_sid: created, count=1, alert_id=e0b2e93f-8669-49f2-bb37-57c59f175244
+PASS other_source: created, count=1, alert_id=4913ab3a-6740-482c-97b4-52b2334d34d9
+PASS other_dest: created, count=1, alert_id=edcea33f-b206-4b39-b775-a7311c9254c5
+PASS other_proto: created, count=1, alert_id=f4ac90ce-9801-4f64-8d33-eb2b7a1faca0
+PASS unknown_app: created, count=1, alert_id=76c8e7b5-8d53-450a-b9b4-b2e853a27aac
+PASS TC06: six different keys within one 60-second window, six groups and zero merges.
