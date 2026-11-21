@@ -1,0 +1,8 @@
+TC08: one key, exclusive right boundary and fixed 60-second windows.
+PASS t+0s: created group A, count=1
+PASS t+59.5s: aggregated group A, count=2
+PASS t+60s: created group B, count=1
+PASS t+119.5s: aggregated group B, count=2
+PASS t+121s: created group C, count=1
+PASS t+180.5s: aggregated group C, count=2
+PASS TC08: exact and past-window events started new groups; SQLite contains three groups of two.
