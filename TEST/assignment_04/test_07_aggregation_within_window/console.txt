@@ -1,0 +1,6 @@
+TC07: repeated detections inside a fixed 60-second window.
+PASS event 1: t+0s -> created, count=1
+PASS event 2: t+0s -> aggregated, count=2
+PASS event 3: t+15s -> aggregated, count=3
+PASS event 4: t+59.5s -> aggregated, count=4
+PASS TC07: four events in one group with the same alert_id and correct timestamps.

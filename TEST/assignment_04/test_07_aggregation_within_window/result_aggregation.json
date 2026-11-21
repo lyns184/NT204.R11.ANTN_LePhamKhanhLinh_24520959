@@ -1,0 +1,152 @@
+{
+  "window_seconds": 60.0,
+  "steps": [
+    {
+      "offset_seconds": 0.0,
+      "input_src_port": 12345,
+      "input_flow_id": "flow-original",
+      "expected_status": "created",
+      "status": "created",
+      "alert": {
+        "alert_id": "a69f176c-6b71-486c-ad9c-e19cff1a6fe9",
+        "sid": 104071,
+        "msg": "Kiểm thử gom trong cửa sổ",
+        "severity": "HIGH",
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "first_seen": 1700000000.0,
+        "last_seen": 1700000000.0,
+        "count": 1,
+        "src_port": 12345,
+        "dst_port": 80,
+        "protocol": "TCP",
+        "application_protocol": "HTTP",
+        "flow_id": "flow-original",
+        "classtype": null,
+        "priority": 2,
+        "rev": null,
+        "run_id": "6414038f-2b95-40cb-93fb-5d3226e15850",
+        "timestamp": 1700000000.0
+      }
+    },
+    {
+      "offset_seconds": 0.0,
+      "input_src_port": 12345,
+      "input_flow_id": "flow-original",
+      "expected_status": "aggregated",
+      "status": "aggregated",
+      "alert": {
+        "alert_id": "a69f176c-6b71-486c-ad9c-e19cff1a6fe9",
+        "sid": 104071,
+        "msg": "Kiểm thử gom trong cửa sổ",
+        "severity": "HIGH",
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "first_seen": 1700000000.0,
+        "last_seen": 1700000000.0,
+        "count": 2,
+        "src_port": 12345,
+        "dst_port": 80,
+        "protocol": "TCP",
+        "application_protocol": "HTTP",
+        "flow_id": "flow-original",
+        "classtype": null,
+        "priority": 2,
+        "rev": null,
+        "run_id": "6414038f-2b95-40cb-93fb-5d3226e15850",
+        "timestamp": 1700000000.0
+      }
+    },
+    {
+      "offset_seconds": 15.0,
+      "input_src_port": 23456,
+      "input_flow_id": "flow-later",
+      "expected_status": "aggregated",
+      "status": "aggregated",
+      "alert": {
+        "alert_id": "a69f176c-6b71-486c-ad9c-e19cff1a6fe9",
+        "sid": 104071,
+        "msg": "Kiểm thử gom trong cửa sổ",
+        "severity": "HIGH",
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "first_seen": 1700000000.0,
+        "last_seen": 1700000015.0,
+        "count": 3,
+        "src_port": 12345,
+        "dst_port": 80,
+        "protocol": "TCP",
+        "application_protocol": "HTTP",
+        "flow_id": "flow-original",
+        "classtype": null,
+        "priority": 2,
+        "rev": null,
+        "run_id": "6414038f-2b95-40cb-93fb-5d3226e15850",
+        "timestamp": 1700000000.0
+      }
+    },
+    {
+      "offset_seconds": 59.5,
+      "input_src_port": 34567,
+      "input_flow_id": "flow-near-boundary",
+      "expected_status": "aggregated",
+      "status": "aggregated",
+      "alert": {
+        "alert_id": "a69f176c-6b71-486c-ad9c-e19cff1a6fe9",
+        "sid": 104071,
+        "msg": "Kiểm thử gom trong cửa sổ",
+        "severity": "HIGH",
+        "src_ip": "192.0.2.10",
+        "dst_ip": "198.51.100.20",
+        "first_seen": 1700000000.0,
+        "last_seen": 1700000059.5,
+        "count": 4,
+        "src_port": 12345,
+        "dst_port": 80,
+        "protocol": "TCP",
+        "application_protocol": "HTTP",
+        "flow_id": "flow-original",
+        "classtype": null,
+        "priority": 2,
+        "rev": null,
+        "run_id": "6414038f-2b95-40cb-93fb-5d3226e15850",
+        "timestamp": 1700000000.0
+      }
+    }
+  ],
+  "counts": {
+    "received": 4,
+    "rejected": 0,
+    "filtered": 0,
+    "created": 1,
+    "aggregated": 3,
+    "storage_errors": 0,
+    "filtered_by_reason": {
+      "sid_suppressed": 0,
+      "below_min_severity": 0
+    }
+  },
+  "stored_alerts": [
+    {
+      "alert_id": "a69f176c-6b71-486c-ad9c-e19cff1a6fe9",
+      "sid": 104071,
+      "msg": "Kiểm thử gom trong cửa sổ",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000000.0,
+      "last_seen": 1700000059.5,
+      "count": 4,
+      "src_port": 12345,
+      "dst_port": 80,
+      "protocol": "TCP",
+      "application_protocol": "HTTP",
+      "flow_id": "flow-original",
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "6414038f-2b95-40cb-93fb-5d3226e15850",
+      "timestamp": 1700000000.0
+    }
+  ]
+}
