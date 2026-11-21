@@ -1,0 +1,5 @@
+TC01: two simulated Detection Events, three conversion calls.
+PASS TCP callback record: sid=104001, severity=HIGH, count=1, alert_id=245e04d3-deb7-429d-9d35-00e27bd3a600
+PASS same TCP detection as object: sid=104001, severity=HIGH, count=1, alert_id=26729592-026a-45a6-b515-c6f0716043c5
+PASS UDP callback with optional fields absent or unknown: sid=104002, severity=LOW, count=1, alert_id=e09f4dde-b6f0-431e-8985-61157f52e3b2
+PASS TC01: three complete alerts, three unique UUIDv4 IDs, input unchanged and JSONL roundtrip.
