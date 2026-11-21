@@ -1,0 +1,7 @@
+TC04: min_severity=HIGH, real AlertManager and temporary SQLite.
+PASS t+0s: SID 104042 (HIGH) -> created
+PASS t+1s: SID 104043 (MEDIUM) -> filtered
+PASS t+2s: SID 104044 (LOW) -> filtered
+PASS t+3s: SID 104041 (CRITICAL) -> created
+PASS t+4s: SID 104042 (HIGH) -> aggregated
+PASS TC04: two below-threshold events filtered; SQLite contains two groups and three occurrences.

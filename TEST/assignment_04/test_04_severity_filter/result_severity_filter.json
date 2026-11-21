@@ -1,0 +1,106 @@
+{
+  "min_severity": "HIGH",
+  "cases": [
+    {
+      "offset_seconds": 0,
+      "sid": 104042,
+      "priority": 2,
+      "expected_severity": "HIGH",
+      "expected_status": "created",
+      "status": "created",
+      "reason": null
+    },
+    {
+      "offset_seconds": 1,
+      "sid": 104043,
+      "priority": 3,
+      "expected_severity": "MEDIUM",
+      "expected_status": "filtered",
+      "status": "filtered",
+      "reason": "below_min_severity"
+    },
+    {
+      "offset_seconds": 2,
+      "sid": 104044,
+      "priority": 4,
+      "expected_severity": "LOW",
+      "expected_status": "filtered",
+      "status": "filtered",
+      "reason": "below_min_severity"
+    },
+    {
+      "offset_seconds": 3,
+      "sid": 104041,
+      "priority": 1,
+      "expected_severity": "CRITICAL",
+      "expected_status": "created",
+      "status": "created",
+      "reason": null
+    },
+    {
+      "offset_seconds": 4,
+      "sid": 104042,
+      "priority": 2,
+      "expected_severity": "HIGH",
+      "expected_status": "aggregated",
+      "status": "aggregated",
+      "reason": null
+    }
+  ],
+  "counts": {
+    "received": 5,
+    "rejected": 0,
+    "filtered": 2,
+    "created": 2,
+    "aggregated": 1,
+    "storage_errors": 0,
+    "filtered_by_reason": {
+      "sid_suppressed": 0,
+      "below_min_severity": 2
+    }
+  },
+  "stored_alerts": [
+    {
+      "alert_id": "0f157de1-3046-4be1-b570-2e046ced2d31",
+      "sid": 104042,
+      "msg": "Kiểm thử ngưỡng severity",
+      "severity": "HIGH",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000000.0,
+      "last_seen": 1700000004.0,
+      "count": 2,
+      "src_port": null,
+      "dst_port": null,
+      "protocol": "TCP",
+      "application_protocol": null,
+      "flow_id": null,
+      "classtype": null,
+      "priority": 2,
+      "rev": null,
+      "run_id": "2f2e23ed-fcd9-4ab7-b7dc-7e024f3e6183",
+      "timestamp": 1700000000.0
+    },
+    {
+      "alert_id": "dde5751e-28a6-4aa5-bf74-15503f8fc5e7",
+      "sid": 104041,
+      "msg": "Kiểm thử ngưỡng severity",
+      "severity": "CRITICAL",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000003.0,
+      "last_seen": 1700000003.0,
+      "count": 1,
+      "src_port": null,
+      "dst_port": null,
+      "protocol": "TCP",
+      "application_protocol": null,
+      "flow_id": null,
+      "classtype": null,
+      "priority": 1,
+      "rev": null,
+      "run_id": "2f2e23ed-fcd9-4ab7-b7dc-7e024f3e6183",
+      "timestamp": 1700000003.0
+    }
+  ]
+}
