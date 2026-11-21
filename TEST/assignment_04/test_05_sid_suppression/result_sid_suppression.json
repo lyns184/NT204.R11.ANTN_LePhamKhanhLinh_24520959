@@ -1,0 +1,98 @@
+{
+  "suppressed_sids": [
+    104052,
+    104053
+  ],
+  "min_severity": "HIGH",
+  "cases": [
+    {
+      "offset_seconds": 0,
+      "sid": 104051,
+      "priority": 1,
+      "expected_status": "created",
+      "expected_reason": null,
+      "status": "created",
+      "reason": null
+    },
+    {
+      "offset_seconds": 1,
+      "sid": 104052,
+      "priority": 1,
+      "expected_status": "filtered",
+      "expected_reason": "sid_suppressed",
+      "status": "filtered",
+      "reason": "sid_suppressed"
+    },
+    {
+      "offset_seconds": 2,
+      "sid": 104053,
+      "priority": 4,
+      "expected_status": "filtered",
+      "expected_reason": "sid_suppressed",
+      "status": "filtered",
+      "reason": "sid_suppressed"
+    },
+    {
+      "offset_seconds": 3,
+      "sid": 104054,
+      "priority": 4,
+      "expected_status": "filtered",
+      "expected_reason": "below_min_severity",
+      "status": "filtered",
+      "reason": "below_min_severity"
+    },
+    {
+      "offset_seconds": 4,
+      "sid": 104052,
+      "priority": 1,
+      "expected_status": "filtered",
+      "expected_reason": "sid_suppressed",
+      "status": "filtered",
+      "reason": "sid_suppressed"
+    },
+    {
+      "offset_seconds": 5,
+      "sid": 104051,
+      "priority": 1,
+      "expected_status": "aggregated",
+      "expected_reason": null,
+      "status": "aggregated",
+      "reason": null
+    }
+  ],
+  "counts": {
+    "received": 6,
+    "rejected": 0,
+    "filtered": 4,
+    "created": 1,
+    "aggregated": 1,
+    "storage_errors": 0,
+    "filtered_by_reason": {
+      "sid_suppressed": 3,
+      "below_min_severity": 1
+    }
+  },
+  "stored_alerts": [
+    {
+      "alert_id": "0795b0f0-b3a9-469b-897d-8e03630ca2e9",
+      "sid": 104051,
+      "msg": "Kiểm thử lọc SID",
+      "severity": "CRITICAL",
+      "src_ip": "192.0.2.10",
+      "dst_ip": "198.51.100.20",
+      "first_seen": 1700000000.0,
+      "last_seen": 1700000005.0,
+      "count": 2,
+      "src_port": null,
+      "dst_port": null,
+      "protocol": "TCP",
+      "application_protocol": null,
+      "flow_id": null,
+      "classtype": null,
+      "priority": 1,
+      "rev": null,
+      "run_id": "dca6835e-b979-4617-831d-b994d05f01f6",
+      "timestamp": 1700000000.0
+    }
+  ]
+}

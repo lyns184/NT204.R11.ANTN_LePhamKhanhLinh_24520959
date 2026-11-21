@@ -1,0 +1,8 @@
+TC05: configured SID suppression, real AlertManager and temporary SQLite.
+PASS t+0s: SID 104051 -> created (-)
+PASS t+1s: SID 104052 -> filtered (sid_suppressed)
+PASS t+2s: SID 104053 -> filtered (sid_suppressed)
+PASS t+3s: SID 104054 -> filtered (below_min_severity)
+PASS t+4s: SID 104052 -> filtered (sid_suppressed)
+PASS t+5s: SID 104051 -> aggregated (-)
+PASS TC05: three SID suppressions, one severity rejection, one stored group with count=2.
