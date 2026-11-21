@@ -1,0 +1,10 @@
+TC02: simulated Detection Events and two configuration profiles.
+PASS priority_1: default=CRITICAL, custom=MEDIUM
+PASS priority_2: default=HIGH, custom=CRITICAL
+PASS priority_3: default=MEDIUM, custom=HIGH
+PASS priority_4: default=LOW, custom=HIGH
+PASS priority_7: default=LOW, custom=LOW
+PASS priority_8: default=LOW, custom=HIGH
+PASS priority_null: default=LOW, custom=HIGH
+PASS priority_missing: default=LOW, custom=HIGH
+PASS TC02: 8 cases, 16 conversions, all severities match.

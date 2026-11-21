@@ -1,0 +1,9 @@
+{
+  "severity_mapping": {
+    "1": "MEDIUM",
+    "2": "CRITICAL",
+    "4": "HIGH",
+    "7": "LOW"
+  },
+  "default_severity": "HIGH"
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "case": "priority_1",
+    "config": "default",
+    "priority_present": true,
+    "priority": 1,
+    "expected": "CRITICAL",
+    "actual": "CRITICAL"
+  },
+  {
+    "case": "priority_1",
+    "config": "custom",
+    "priority_present": true,
+    "priority": 1,
+    "expected": "MEDIUM",
+    "actual": "MEDIUM"
+  },
+  {
+    "case": "priority_2",
+    "config": "default",
+    "priority_present": true,
+    "priority": 2,
+    "expected": "HIGH",
+    "actual": "HIGH"
+  },
+  {
+    "case": "priority_2",
+    "config": "custom",
+    "priority_present": true,
+    "priority": 2,
+    "expected": "CRITICAL",
+    "actual": "CRITICAL"
+  },
+  {
+    "case": "priority_3",
+    "config": "default",
+    "priority_present": true,
+    "priority": 3,
+    "expected": "MEDIUM",
+    "actual": "MEDIUM"
+  },
+  {
+    "case": "priority_3",
+    "config": "custom",
+    "priority_present": true,
+    "priority": 3,
+    "expected": "HIGH",
+    "actual": "HIGH"
+  },
+  {
+    "case": "priority_4",
+    "config": "default",
+    "priority_present": true,
+    "priority": 4,
+    "expected": "LOW",
+    "actual": "LOW"
+  },
+  {
+    "case": "priority_4",
+    "config": "custom",
+    "priority_present": true,
+    "priority": 4,
+    "expected": "HIGH",
+    "actual": "HIGH"
+  },
+  {
+    "case": "priority_7",
+    "config": "default",
+    "priority_present": true,
+    "priority": 7,
+    "expected": "LOW",
+    "actual": "LOW"
+  },
+  {
+    "case": "priority_7",
+    "config": "custom",
+    "priority_present": true,
+    "priority": 7,
+    "expected": "LOW",
+    "actual": "LOW"
+  },
+  {
+    "case": "priority_8",
+    "config": "default",
+    "priority_present": true,
+    "priority": 8,
+    "expected": "LOW",
+    "actual": "LOW"
+  },
+  {
+    "case": "priority_8",
+    "config": "custom",
+    "priority_present": true,
+    "priority": 8,
+    "expected": "HIGH",
+    "actual": "HIGH"
+  },
+  {
+    "case": "priority_null",
+    "config": "default",
+    "priority_present": true,
+    "priority": null,
+    "expected": "LOW",
+    "actual": "LOW"
+  },
+  {
+    "case": "priority_null",
+    "config": "custom",
+    "priority_present": true,
+    "priority": null,
+    "expected": "HIGH",
+    "actual": "HIGH"
+  },
+  {
+    "case": "priority_missing",
+    "config": "default",
+    "priority_present": false,
+    "priority": null,
+    "expected": "LOW",
+    "actual": "LOW"
+  },
+  {
+    "case": "priority_missing",
+    "config": "custom",
+    "priority_present": false,
+    "priority": null,
+    "expected": "HIGH",
+    "actual": "HIGH"
+  }
+]
